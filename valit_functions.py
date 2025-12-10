@@ -1,0 +1,181 @@
+from networkx.classes.function import get_node_attributes, set_node_attributes
+import random
+from prob_model import probability_model
+
+# value iteration constants
+failure_cost = 1.0E30
+max_valits = 1000
+
+# Compute the stationary cost-to-go function and return a solution path.
+def valit_path(graph, init, goal_region):
+    # initialize values
+    for n in graph.nodes:
+        set_node_attributes(graph, {n:failure_cost}, 'value')
+    for goal in goal_region:
+        set_node_attributes(graph, {goal:0.0}, 'value') # This is the termination action, although it is not an action to speak of.
+    
+    # main loop
+    i = 0
+    max_change = failure_cost
+    while i < max_valits and max_change > 0.0:
+        max_change = 0.0
+        for m in graph.nodes:
+            best_cost = failure_cost
+            best_n = m
+            for n in graph.neighbors(m):
+                step_cost = graph.get_edge_data(n,m)['weight']
+                cost = graph.nodes[n]['value'] + step_cost
+                if cost < best_cost:
+                    best_cost = cost
+                    best_n = n
+            stay_cost = graph.nodes[m]['value']
+            if best_cost < stay_cost:
+                if stay_cost - best_cost > max_change:
+                    max_change = stay_cost - best_cost
+                set_node_attributes(graph, {m:best_cost}, 'value')
+                set_node_attributes(graph, {m:best_n}, 'next')
+        i += 1
+    path = []
+    if graph.nodes[init]['value'] < failure_cost:
+        path.append(init)
+        goal_reached = False
+        current_node = init
+        while not goal_reached:
+            nn = graph.nodes[current_node]['next']
+            path.append(nn)
+            current_node = nn
+            if nn in goal_region:
+                goal_reached = True
+    print("Stages: " + str(i))
+    return path
+
+def random_valit_path(graph, init, goal_region, epsilon_greedy = False):
+    # initialize values
+    for n in graph.nodes:
+        set_node_attributes(graph, {n:failure_cost}, 'value')
+        set_node_attributes(graph, {n:False}, 'updated') # has the node been visited
+    for goal in goal_region:
+        set_node_attributes(graph, {goal:0.0}, 'value') # This is the termination action, although it is not an action to speak of.
+    
+    # main loop
+    i = 0
+    nodes_updated = get_node_attributes(graph, "updated")
+    while i < max_valits:
+        for m in graph.nodes:
+            if not list(graph.neighbors(m)):
+                continue 
+            if not epsilon_greedy:
+                chosen_n = random.choice(list(graph.neighbors(m)))
+            else:
+                if random.random() < 0.1:
+                    chosen_n = random.choice(list(graph.neighbors(m)))
+                else:
+                    chosen_n = min(
+                        graph.neighbors(m),
+                        key=lambda n: graph.nodes[n]["value"] + graph.get_edge_data(n,m)['weight']
+                    )
+            step_cost = graph.get_edge_data(chosen_n,m)['weight']
+            cost = graph.nodes[chosen_n]['value'] + step_cost
+
+            best_cost = failure_cost
+            best_n = m
+            if cost < best_cost:
+                best_cost = cost
+                best_n = chosen_n
+            stay_cost = graph.nodes[m]['value']
+            if best_cost < stay_cost:
+                current = graph.nodes[m].get('updated', None)
+                set_node_attributes(graph, {m:not current}, 'updated')
+                set_node_attributes(graph, {m:best_cost}, 'value')
+                set_node_attributes(graph, {m:best_n}, 'next')
+        if i != 0 and i % 50 == 0: # TODO: Can be optimized with statistics? If the node has 4 actions how many times do we need to visit it so that we are sure that all actions have been tried?
+            new_nodes_updated =  get_node_attributes(graph, "updated")
+            if nodes_updated == new_nodes_updated:
+                break
+            nodes_updated = new_nodes_updated
+        i += 1
+    path = []
+    if graph.nodes[init]['value'] < failure_cost:
+        path.append(init)
+        goal_reached = False
+        current_node = init
+        while not goal_reached:
+            nn = graph.nodes[current_node]['next']
+            path.append(nn)
+            current_node = nn
+            if nn in goal_region:
+                goal_reached = True
+    print("Stages: " + str(i))
+    return path
+
+def prob_valit(graph, init, goal_region):
+    # initialize values
+    for n in graph.nodes:
+        set_node_attributes(graph, {n:failure_cost}, 'value')
+    for goal in goal_region:
+        set_node_attributes(graph, {goal:0.0}, 'value')
+    
+    # main loop
+    i = 0
+    max_change = failure_cost
+    while i < max_valits and max_change > 0.0:
+        max_change = 0.0
+        for m in graph.nodes:
+            best_cost = failure_cost
+            best_n = m
+            
+            for n in graph.neighbors(m):
+                # Get edge count
+                prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(m))))
+                
+                cost = graph.nodes[n]['value'] * prob_success # multiply by success probability
+                cost = cost + graph.nodes[m]['value'] * prob_stay # multiply by stay probability
+
+                # sum up expected costs and multiply by updated chosen probability
+                for o in graph.neighbors(m):
+                    if o != n: #make sure that the current node is not taken into account
+                        cost = cost + graph.nodes[o]['value'] * prob_other
+
+                # add weight to summed up cost    
+                step_cost = graph.get_edge_data(n,m)['weight']
+                cost = cost + step_cost
+
+                if cost < best_cost:
+                    best_cost = cost
+                    best_n = n
+            stay_cost = graph.nodes[m]['value']
+            if best_cost < stay_cost:
+                if stay_cost - best_cost > max_change:
+                    max_change = stay_cost - best_cost
+                set_node_attributes(graph, {m:best_cost}, 'value')
+                set_node_attributes(graph, {m:best_n}, 'next')
+        i += 1
+    
+    #print(get_node_attributes(graph, 'value'))
+    path = []
+    if graph.nodes[init]['value'] < failure_cost:
+        path.append(init)
+        goal_reached = False
+        current_node = init
+        while not goal_reached:
+            desired = graph.nodes[current_node]['next'] # select our desired node
+            prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(current_node)))) # get probabilities
+            choice = random.random()
+            if choice <= prob_success:
+                nn = desired # successful transition
+            elif choice > prob_success and choice <= prob_success + prob_stay:
+                nn = current_node # stay
+            else:
+                current_range = prob_success + prob_stay
+                for o in graph.neighbors(current_node):
+                    if o != desired: # make sure that the desired node is not taken into account
+                        if choice > current_range and choice <= current_range + prob_other:
+                            nn = o
+                            break
+                        else: current_range += prob_other
+            path.append(nn)
+            current_node = nn
+            if nn in goal_region:
+                goal_reached = True
+    print("Stages: " + str(i))
+    return path
