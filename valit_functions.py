@@ -6,49 +6,6 @@ from prob_model import probability_model
 failure_cost = 1.0E30
 max_valits = 1000
 
-# Compute the stationary cost-to-go function and return a solution path.
-def valit_path(graph, init, goal_region):
-    # initialize values
-    for n in graph.nodes:
-        set_node_attributes(graph, {n:failure_cost}, 'value')
-    for goal in goal_region:
-        set_node_attributes(graph, {goal:0.0}, 'value') # This is the termination action, although it is not an action to speak of.
-    
-    # main loop
-    i = 0
-    max_change = failure_cost
-    while i < max_valits and max_change > 0.0:
-        max_change = 0.0
-        for m in graph.nodes:
-            best_cost = failure_cost
-            best_n = m
-            for n in graph.neighbors(m):
-                step_cost = graph.get_edge_data(n,m)['weight']
-                cost = graph.nodes[n]['value'] + step_cost
-                if cost < best_cost:
-                    best_cost = cost
-                    best_n = n
-            stay_cost = graph.nodes[m]['value']
-            if best_cost < stay_cost:
-                if stay_cost - best_cost > max_change:
-                    max_change = stay_cost - best_cost
-                set_node_attributes(graph, {m:best_cost}, 'value')
-                set_node_attributes(graph, {m:best_n}, 'next')
-        i += 1
-    path = []
-    if graph.nodes[init]['value'] < failure_cost:
-        path.append(init)
-        goal_reached = False
-        current_node = init
-        while not goal_reached:
-            nn = graph.nodes[current_node]['next']
-            path.append(nn)
-            current_node = nn
-            if nn in goal_region:
-                goal_reached = True
-    print("Stages: " + str(i))
-    return path
-
 def random_valit_path(graph, init, goal_region, epsilon_greedy = False):
     # initialize values
     for n in graph.nodes:
@@ -173,6 +130,53 @@ def prob_valit(graph, init, goal_region):
                             nn = o
                             break
                         else: current_range += prob_other
+            path.append(nn)
+            current_node = nn
+            if nn in goal_region:
+                goal_reached = True
+    print("Stages: " + str(i))
+    return path
+
+# Below code is taken from:
+# Robot Planning Python Library (RPPL)
+# Copyright (c) 2021 Alexander J. LaValle. All rights reserved.
+# This software is distributed under the simplified BSD license.
+# Compute the stationary cost-to-go function and return a solution path.
+def valit_path(graph, init, goal_region):
+    # initialize values
+    for n in graph.nodes:
+        set_node_attributes(graph, {n:failure_cost}, 'value')
+    for goal in goal_region:
+        set_node_attributes(graph, {goal:0.0}, 'value') # This is the termination action, although it is not an action to speak of.
+    
+    # main loop
+    i = 0
+    max_change = failure_cost
+    while i < max_valits and max_change > 0.0:
+        max_change = 0.0
+        for m in graph.nodes:
+            best_cost = failure_cost
+            best_n = m
+            for n in graph.neighbors(m):
+                step_cost = graph.get_edge_data(n,m)['weight']
+                cost = graph.nodes[n]['value'] + step_cost
+                if cost < best_cost:
+                    best_cost = cost
+                    best_n = n
+            stay_cost = graph.nodes[m]['value']
+            if best_cost < stay_cost:
+                if stay_cost - best_cost > max_change:
+                    max_change = stay_cost - best_cost
+                set_node_attributes(graph, {m:best_cost}, 'value')
+                set_node_attributes(graph, {m:best_n}, 'next')
+        i += 1
+    path = []
+    if graph.nodes[init]['value'] < failure_cost:
+        path.append(init)
+        goal_reached = False
+        current_node = init
+        while not goal_reached:
+            nn = graph.nodes[current_node]['next']
             path.append(nn)
             current_node = nn
             if nn in goal_region:

@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-
+# Modified from:
 # Robot Planning Python Library (RPPL)
 # Copyright (c) 2021 Alexander J. LaValle. All rights reserved.
 # This software is distributed under the simplified BSD license.
