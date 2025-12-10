@@ -5,102 +5,48 @@
 # This software is distributed under the simplified BSD license.
 
 from networkx.classes.function import get_node_attributes
-import pygame, time
+import pygame
 from pygame.locals import *
-import networkx as nx
 from tkinter import *
-from ast import literal_eval
-from rppl_util_necessary import *
+from valit_q_testbed_helper import init_problem, find_path
 from q_learning_functions import *
 from valit_functions import *
-
 
 dims = 20 # number of samples per axis
 radius = 1 # neightborhood radius (1 = four-neighbors)
 exnum = 2 # example number
-xmax = 800 # force a square environment
-ymax = 800
 
+use_qlearning = False
+
+white = 255, 255, 255
+grey = 100, 100, 100
 black = 0, 0, 0
 red = 255, 0, 0
 blue = 50, 50, 255
 green = 0, 255, 0
 
-screen = pygame.display.set_mode([xmax,ymax])
-use_qlearning = False
-pygame.display.set_caption('Grid Planner')
+def draw_graph_edges(g,screen):
+    for i,j in g.edges:
+        pygame.draw.line(screen,white,g.nodes[i]['point'],g.nodes[j]['point'],2)
 
-# This corresponds to GUI button 'Draw' that runs the example.
-def Draw():
-    obstacles = literal_eval(problines[exnum*3])
-    initial = literal_eval(problines[exnum*3+1])
-    goal = literal_eval(problines[exnum*3+2])
+def draw_discs(dlist,screen):
+    for d in dlist:
+        pygame.draw.circle(screen,grey,[d[0],d[1]],d[2])
 
-    global G
-    arr = [[0 for i in range(dims)] for j in range(dims)]
-    actions = generate_neighborhood_indices(radius)
-    G = nx.Graph()
+def draw_pygame(graph, obstacles, p1index, has_path, path, length, goal_indices):
+    xmax = 800 # force a square environment
+    ymax = 800
+    screen = pygame.display.set_mode([xmax,ymax])
+    pygame.display.set_caption('Grid Planner')
     pygame.init()
     screen.fill(black)
-    incrementy = 0
-    i = 0
-    length = 0
-    
-    # construct grid
-    for y in range(dims):
-        if y > 0:
-            incrementy += ymax/dims + (ymax/dims)/(dims-1)
-        incrementx = 0
-        for x in range(dims):
-            G.add_node(i, point=(incrementx,incrementy))
-            incrementx += xmax/dims + (xmax/dims)/(dims-1)
-            arr[y][x] = i
-            i += 1
-    for x in range(dims):
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                quit()
-        for y in range(dims):
-            for u in actions:
-                if (0 <= x + u[0] <= dims-1 and 0 <= y + u[1] <= dims-1 
-                    and safe(G.nodes[arr[y][x]]['point'],G.nodes[arr[y+u[1]][x+u[0]]]['point'],obstacles) 
-                    and not G.has_edge(arr[y][x],arr[y+u[1]][x+u[0]])
-                    ):
-                    G.add_edge(arr[y][x],arr[y+u[1]][x+u[0]],weight=dist2(G.nodes[arr[y][x]]['point'],G.nodes[arr[y+u[1]][x+u[0]]]['point']))
-    # The next three lines delete the obstacle nodes (optional).
-    #for i in range(len(G.nodes)):
-    #        if point_inside_discs(G.nodes[i]['point'],obstacles):
-    #            G.remove_node(i)
     draw_discs(obstacles, screen)
-    draw_graph_edges(G, screen)
-    p1index = find_closest_node(initial,G.nodes)
-    p2index = find_closest_node(goal,G.nodes)
-    # Print edge cost/weight
-    # for (u,v,c) in G.edges().data():
-    #     print("Edge (" + str(u) + ", " + str(v) +"): " + str(c))
+    draw_graph_edges(graph, screen)
 
-    # Use a radius parameter to find the neighbors that will define the goal region
-    goal_radius = 0
-    goal_indices = list(nx.single_source_shortest_path_length(G, p2index, cutoff=goal_radius).keys())
-
-    #Since the graph is undirected, this is equivalent to checking if there is a path from p1index to any of the goal_indices
-    if nx.has_path(G,p1index,p2index):
-        t = time.time()
-        if use_qlearning:
-            path = q_learning_dc_path(G, p1index, goal_indices)
-            print('Q-learning:   time elapsed:     ' + str(time.time() - t) + ' seconds')
-        # elif use_dijkstra:
-        #     path = nx.dijkstra_path(G,p1index,p2index)
-        #     print('dijkstra:    time elapsed:     ' + str(time.time() - t) + ' seconds')
-        else:
-            path = random_valit_path(G,p1index,goal_indices, True)
-            print('value iteration: time elapsed: ' + str(time.time() - t) + ' seconds')
-        print("Shortest path: " + str(len(path)))
+    if has_path:
         for l in range(len(path)):
             if l > 0:
                 pygame.draw.line(screen,green,G.nodes[path[l]]['point'],G.nodes[path[l-1]]['point'],5)
-                if G.get_edge_data(path[l],path[l-1]) is not None: # When there are loops, there is no weight in some cases
-                    length += G.get_edge_data(path[l],path[l-1])['weight']
         pygame.display.set_caption('Grid Planner, Euclidean Distance: ' +str(length))
     else:
         print('Path not found')
@@ -114,6 +60,19 @@ def Draw():
     pygame.display.update()
     #pygame.image.save(screen, "screenshot.png")
 
+# This corresponds to GUI button 'Draw' that runs the example.
+def Draw():
+    global G
+    G, p1index, p2index, obstacles, goal_indices = init_problem(problines, exnum, dims, radius)
+    if use_qlearning:
+        has_path, path, length, elapsed_time = find_path(G, p1index,p2index, q_learning_dc_path, (G, p1index, goal_indices))
+        print('Q-learning:   time elapsed:     ' + str(elapsed_time) + ' seconds')
+    else:
+        has_path, path, length, elapsed_time = find_path(G, p1index,p2index, random_valit_path, (G, p1index, goal_indices, True))
+        print('value iteration:   time elapsed:     ' + str(elapsed_time) + ' seconds')
+    print("Shortest path: " + str(len(path)))
+    draw_pygame(G, obstacles, p1index, has_path, path, length, goal_indices)
+        
 # get example list
 problem = open('problem_circles.txt')
 problines = problem.readlines()

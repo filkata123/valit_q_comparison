@@ -4,10 +4,7 @@
 # This software is distributed under the simplified BSD license.
 
 from math import sqrt
-import pygame
-
-white = 255, 255, 255
-grey = 100, 100, 100
+import networkx as nx
 
 def sqr(a):
     return a * a
@@ -39,13 +36,6 @@ def detect( A, B, C, r ):#https://stackoverflow.com/questions/26725842/how-to-pi
 
     return in_circle and in_segment
 
-def draw_graph_edges(g,screen):
-    for i,j in g.edges:
-        pygame.draw.line(screen,white,g.nodes[i]['point'],g.nodes[j]['point'],2)
-
-def draw_discs(dlist,screen):
-    for d in dlist:
-        pygame.draw.circle(screen,grey,[d[0],d[1]],d[2])
 
 def find_closest_node(mpos,nodes):
     a = [dist2(mpos, nodes[0]['point']),0]
@@ -70,3 +60,33 @@ def generate_neighborhood_indices(radius):
             if 0 < vlen([i,j]) <= radius:
                 neighbors.append([i,j])
     return neighbors
+
+def build_grid_graph(dims, radius, obstacles, xmax=800, ymax=800):
+    arr = [[0 for _ in range(dims)] for _ in range(dims)]
+    actions = generate_neighborhood_indices(radius)
+    G = nx.Graph()
+    incrementy = 0
+    i = 0
+
+    # place nodes in a grid (points in continuous space)
+    for y in range(dims):
+        if y > 0:
+            incrementy += ymax/dims + (ymax/dims)/(dims-1)
+        incrementx = 0
+        for x in range(dims):
+            G.add_node(i, point=(incrementx, incrementy))
+            incrementx += xmax/dims + (xmax/dims)/(dims-1)
+            arr[y][x] = i
+            i += 1
+    # add edges if line-segment between points is safe w.r.t obstacles
+    for x in range(dims):
+        for y in range(dims):
+            for u in actions:
+                nx_ = x + u[0]
+                ny_ = y + u[1]
+                if 0 <= nx_ <= dims-1 and 0 <= ny_ <= dims-1:
+                    a = arr[y][x]
+                    b = arr[ny_][nx_]
+                    if safe(G.nodes[a]['point'], G.nodes[b]['point'], obstacles) and not G.has_edge(a, b):
+                        G.add_edge(a, b, weight=dist2(G.nodes[a]['point'], G.nodes[b]['point']))
+    return G

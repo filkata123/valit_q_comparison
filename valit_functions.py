@@ -62,7 +62,7 @@ def random_valit_path(graph, init, goal_region, epsilon_greedy = False):
             current_node = nn
             if nn in goal_region:
                 goal_reached = True
-    print("Stages: " + str(i))
+    #print("Stages: " + str(i))
     return path
 
 def prob_valit(graph, init, goal_region):
@@ -134,7 +134,7 @@ def prob_valit(graph, init, goal_region):
             current_node = nn
             if nn in goal_region:
                 goal_reached = True
-    print("Stages: " + str(i))
+    #print("Stages: " + str(i))
     return path
 
 # Below code is taken from:
@@ -181,5 +181,5 @@ def valit_path(graph, init, goal_region):
             current_node = nn
             if nn in goal_region:
                 goal_reached = True
-    print("Stages: " + str(i))
+    #print("Stages: " + str(i))
     return path
