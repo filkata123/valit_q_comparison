@@ -9,23 +9,23 @@ def init_problem(problines, exnum, dims, radius):
     goal = literal_eval(problines[exnum*3+2])
 
     # construct grid
-    G = build_grid_graph(dims, radius, obstacles)
+    graph = build_grid_graph(dims, radius, obstacles)
     # The next three lines delete the obstacle nodes (optional).
     #for i in range(len(G.nodes)):
     #        if point_inside_discs(G.nodes[i]['point'],obstacles):
     #            G.remove_node(i)
 
-    p1index = find_closest_node(initial,G.nodes)
-    p2index = find_closest_node(goal,G.nodes)
+    p1index = find_closest_node(initial,graph.nodes)
+    p2index = find_closest_node(goal,graph.nodes)
     # Print edge cost/weight
     # for (u,v,c) in G.edges().data():
     #     print("Edge (" + str(u) + ", " + str(v) +"): " + str(c))
 
     # Use a radius parameter to find the neighbors that will define the goal region
     goal_radius = 0
-    goal_indices = list(nx.single_source_shortest_path_length(G, p2index, cutoff=goal_radius).keys())
+    goal_indices = list(nx.single_source_shortest_path_length(graph, p2index, cutoff=goal_radius).keys())
 
-    return G, p1index, p2index, obstacles, goal_indices
+    return graph, p1index, p2index, obstacles, goal_indices
 
 
 def find_path(graph, p1index, p2index, algorithm, args, kwargs = None):
@@ -39,10 +39,11 @@ def find_path(graph, p1index, p2index, algorithm, args, kwargs = None):
         else:
             path = algorithm(*args, **kwargs)
         elapsed_time = time.time() - t
+        shortest_path = str(len(path))
         for l in range(len(path)):
             if l > 0:
                 if graph.get_edge_data(path[l],path[l-1]) is not None: # When there are loops, there is no weight in some cases
                     length += graph.get_edge_data(path[l],path[l-1])['weight']
         has_path = True
 
-    return has_path, path, length, elapsed_time
+    return has_path, path, length, elapsed_time, shortest_path
