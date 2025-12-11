@@ -258,11 +258,11 @@ class PiChooser:
         return choice
 
 chooser = PiChooser("pi1k_base4.txt")
-deterministic = False
 
 # Compute solution path from Q-table
-def q_learning_path_original(graph, init, goal, episodes=1000, max_steps=500, alpha=0.999, gamma=0.999, initial_epsilon=1):
-    #graph.add_edge(goal, goal, weight=0.0)
+def q_learning_path_reward(graph, init, goal_region, episodes=1000, max_steps=500, alpha=0.999, gamma=0.999, initial_epsilon=1, deterministic = False):
+    #for goal in goal_region:
+    #   graph.add_edge(goal, goal, weight=0.0)
     # Populate Q-table with zeros
     Q = {}
     for u in graph.nodes:
@@ -310,7 +310,7 @@ def q_learning_path_original(graph, init, goal, episodes=1000, max_steps=500, al
                 max_delta = delta
 
             state = next_state
-            if state == goal:
+            if state in goal_region:
                 break
         
 
@@ -327,7 +327,7 @@ def q_learning_path_original(graph, init, goal, episodes=1000, max_steps=500, al
     path = [init]
     current = init
     visited = set()
-    while current != goal:
+    while current not in goal_region:
         visited.add(current)
         neighbors = list(graph.neighbors(current))
         if not neighbors:
@@ -338,5 +338,6 @@ def q_learning_path_original(graph, init, goal, episodes=1000, max_steps=500, al
             break  # avoid loops
         path.append(next_node)
         current = next_node
-    #graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return path if current == goal else []
+    # for goal in goal_region:
+    #     graph.remove_edge(goal, goal) # clean up self-loop at goal
+    return path if current in goal_region else []

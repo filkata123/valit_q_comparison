@@ -65,7 +65,7 @@ def Draw():
     global G
     G, p1index, p2index, obstacles, goal_indices = init_problem(problines, exnum, dims, radius)
     if use_qlearning:
-        has_path, path, length, elapsed_time, shortest_path = find_path(G, p1index,p2index, q_learning_dc_path, (G, p1index, goal_indices))
+        has_path, path, length, elapsed_time, shortest_path = find_path(G, p1index,p2index, q_learning_path_reward, (G, p1index, goal_indices))
         print('Q-learning:   time elapsed:     ' + str(elapsed_time) + ' seconds')
     else:
         has_path, path, length, elapsed_time, shortest_path = find_path(G, p1index,p2index, valit_path, (G, p1index, goal_indices))
