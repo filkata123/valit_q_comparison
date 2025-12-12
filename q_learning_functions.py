@@ -63,7 +63,7 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
     while current not in goal_region:
         neighbors = list(graph.neighbors(current))
         if not neighbors:
-            print("No neighbors found.")
+            #print("No neighbors found.")
             break
         desired = min(neighbors, key=lambda a: Q.get((current, a), float('inf')))
         prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(current)))) # get probabilities
@@ -160,19 +160,23 @@ def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000,
     return path if current in goal_region else []
 
 # Compute solution path from Q-table
-def q_learning_path(graph, init, goal_region, episodes=1000, max_steps=500, alpha=1, gamma=1, initial_epsilon=1):
+def q_learning_path(graph, init, goal_region, 
+                    episodes=1000, max_steps=500, alpha=0.999, gamma=0.999, initial_epsilon=0.1, 
+                    t_action = False, t_goal = True,
+                    exploration_policy = "epsilon-greedy", convergence = False):
     # Add an edge from the goal state to itself with 0 weight (termination action)
-    for goal in goal_region:
-        graph.add_edge(goal, goal, weight=0.0)
+    if t_action:
+        for goal in goal_region:
+            graph.add_edge(goal, goal, weight=0.0)
     
     # Populate Q-table with zeros - not a proper Q-table, since it's technically [state,state]
     Q = {}
     for n in graph.nodes:
         for m in graph.neighbors(n):
-            Q[(n, m)] = 0 # TODO: investigate value, very sensitive to it
+            Q[(n, m)] = 1.0E4 # TODO: investigate value, very sensitive to it
     
     # Epsilon decay
-    epsilon = 0.1 # = initial_epsilon
+    epsilon = initial_epsilon
 
     # Convergence criterion
     convergence_threshold = 1e-4
@@ -187,12 +191,16 @@ def q_learning_path(graph, init, goal_region, episodes=1000, max_steps=500, alph
             if not neighbors:
                 print("No neighbors found.")
                 break
-
-            if random.random() < epsilon:
+            
+            if exploration_policy == "random":
                 action = random.choice(neighbors)
-            else:
+            elif exploration_policy == "greedy":
                 action = min(neighbors, key=lambda a: Q.get((state, a), 0.0))
-            #action = min(neighbors, key=lambda a: Q.get((state, a), 0.0))
+            else: # epsilon-greedy
+                if random.random() < epsilon:
+                    action = random.choice(neighbors)
+                else:
+                    action = min(neighbors, key=lambda a: Q.get((state, a), 0.0))
 
             cost = graph[state][action]['weight']
             next_state = action
@@ -209,13 +217,14 @@ def q_learning_path(graph, init, goal_region, episodes=1000, max_steps=500, alph
                 max_delta = delta
 
             state = next_state
-            if state in goal_region:
+            if t_goal and state in goal_region:
                 break
         
         # If the values in the Q-table haven't changed by a lot, some sort of soft convergence has been reached
-        # if max_delta < convergence_threshold:
-        #     print(f"Q-learning converged at episode {episode}")
-        #     break
+        if convergence:
+            if max_delta < convergence_threshold:
+                #print(f"Q-learning converged at episode {episode}")
+                break
 
     #print(Q)
     # Extract path from learned Q-values
@@ -229,12 +238,13 @@ def q_learning_path(graph, init, goal_region, episodes=1000, max_steps=500, alph
             break
         next_node = min(neighbors, key=lambda a: Q.get((current, a), float('inf')))
         if next_node in visited:
-            print("Loop detected in Q-table. No path to goal available.")
+            #print("Loop detected in Q-table. No path to goal available.")
             break # avoid loops
         path.append(next_node)
         current = next_node
-    for goal in goal_region:
-        graph.remove_edge(goal, goal) # clean up self-loop at goal
+    if t_action:
+        for goal in goal_region:
+            graph.remove_edge(goal, goal) # clean up self-loop at goal
     return path if current in goal_region else []
 
 # Chooser that uses digits of Pi to make choices. Works for any base up to 10.
