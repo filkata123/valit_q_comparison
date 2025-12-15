@@ -1,0 +1,17 @@
+Algorithm,Avg Time,Shortest Path,Inconsistent?,Min Path,Max Path
+"Normal Q-learning (reward, discounting, stochastic approximation and termination goal)",0.019036550521850586,6,False,6,6
+No-discounting Q-learning,0.020173890590667723,6,False,6,6
+"No-discounting, no stochastic approximation Q-learning",0.018749585151672365,6,False,6,6
+"cost-based Q-learning (No discounting, no stochastic approximation)",0.018803956508636473,6,False,6,6
+"cost-based Q-learning (No discounting, no stochastic approximation) w/ term action & term goal",0.019615020751953125,6,False,6,6
+"cost-based Q-learning (No discounting, no stochastic approximation, no term goal) w/ term action",1.731816291809082,6,False,6,6
+"cost-based Q-learning (No discounting, no stochastic approximation, no termination at all)",1.5683068990707398,0,True,0,8
+Fully-random exploration Q-learning,0.12338102102279663,6,False,6,6
+Fully-greedy exploration Q-learning,0.017580592632293703,6,False,6,6
+One-episode random-exploration Q-learning,1.0701847004890441,6,False,6,6
+Fully-greedy Q-learning with convergence,0.0005919790267944336,6,False,6,6
+Don't care Q-learning,0.2902548885345459,6,True,10,8
+Stochastic Q-learning (converging),0.0005678939819335938,8,True,10,9
+Value Iteration,0.0016428709030151367,6,False,6,6
+Random Action Value Iteration,0.01516761064529419,6,False,6,6
+Stochastic Value Iteration,0.01743702411651611,6,True,10,9
