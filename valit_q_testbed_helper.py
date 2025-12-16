@@ -44,8 +44,8 @@ def find_path(graph, p1index, p2index, algorithm, args, kwargs = None):
             if l > 0:
                 if graph.get_edge_data(path[l],path[l-1]) is not None: # When there are loops, there is no weight in some cases
                     length += graph.get_edge_data(path[l],path[l-1])['weight']
-        if (shortest_path != 0):
+        if (shortest_path != "0"):
             has_path = True
         return has_path, path, length, elapsed_time, shortest_path
     else:
-        return has_path, {}, length, 0.0, 0
+        return has_path, {}, length, 0.0, "0"

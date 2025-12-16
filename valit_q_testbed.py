@@ -100,7 +100,7 @@ def SetRadius(val):
 
 def SetExNum(val):
     global exnum
-    exnum = int(val) - 1
+    exnum = int(val)
 
 def Exit():
     master.destroy()
@@ -137,7 +137,7 @@ radscale = Scale(m1, orient = HORIZONTAL, from_=1, to=10, resolution=0.1, comman
 radscale.set(radius)
 m1.add(radscale)
 
-exscale = Scale(m1, orient = HORIZONTAL, from_=1, to=num_of_ex, resolution=1, command=SetExNum, label='Example Number')
+exscale = Scale(m1, orient = HORIZONTAL, from_=0, to=num_of_ex-1, resolution=1, command=SetExNum, label='Example Number')
 exscale.set(int(exnum))
 m1.add(exscale)
 

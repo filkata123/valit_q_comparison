@@ -1,17 +1,17 @@
-Algorithm,Avg Time,Shortest Path,Inconsistent?,Min Path,Max Path
-"Normal Q-learning (reward, discounting, stochastic approximation and termination goal)",0.36633944034576416,64,False,64,64
-No-discounting Q-learning,0.3883278441429138,64,False,64,64
-"No-discounting, no stochastic approximation Q-learning",0.3828243637084961,64,False,64,64
-"cost-based Q-learning (No discounting, no stochastic approximation)",0.39180927276611327,64,False,64,64
-"cost-based Q-learning (No discounting, no stochastic approximation) w/ term action & term goal",0.38739593982696535,64,False,64,64
-"cost-based Q-learning (No discounting, no stochastic approximation, no term goal) w/ term action",1.753343665599823,64,False,64,64
-"cost-based Q-learning (No discounting, no stochastic approximation, no termination at all)",1.703875274658203,0,False,0,0
-Fully-random exploration Q-learning,8.516360340118409,64,False,64,64
-Fully-greedy exploration Q-learning,0.35240134716033933,64,False,64,64
-One-episode random-exploration Q-learning,1.1354341006278992,64,False,64,64
-Fully-greedy Q-learning with convergence,0.1821780562400818,64,False,64,64
-Don't care Q-learning,6.168712739944458,76,True,70,92
-Stochastic Q-learning (converging),0.1979909372329712,72,True,102,99
-Value Iteration,0.028968279361724854,64,False,64,64
-Random Action Value Iteration,0.17102938175201415,64,False,64,64
-Stochastic Value Iteration,0.39598647356033323,75,True,65,90
+Algorithm,Avg Time,Inconsistent?,Best Path,Worst Path
+"Normal Q-learning (reward, discounting, stochastic approximation and termination goal)",0.3705482506752014,False,64,64
+No-discounting Q-learning,0.37894017457962037,False,64,64
+"No-discounting, no stochastic approximation Q-learning",0.3743315815925598,False,64,64
+"cost-based Q-learning (No discounting, no stochastic approximation)",0.3820233011245728,False,64,64
+"cost-based Q-learning (No discounting, no stochastic approximation) w/ term action & term goal",0.37972036123275754,False,64,64
+"cost-based Q-learning (No discounting, no stochastic approximation, no term goal) w/ term action",1.7656541323661805,False,64,64
+"cost-based Q-learning (No discounting, no stochastic approximation, no termination at all)",1.9004159283638,False,0,0
+Fully-random exploration Q-learning,9.534327306747436,False,64,64
+Fully-greedy exploration Q-learning,0.3778527855873108,False,64,64
+One-episode random-exploration Q-learning,1.2887660336494446,False,64,64
+Fully-greedy Q-learning with convergence,0.19910796165466307,False,64,64
+Don't care Q-learning,6.3206426978111265,True,70,94
+Stochastic Q-learning (converging),0.25976722717285156,True,65,11022
+Value Iteration,0.02780019998550415,False,64,64
+Random Action Value Iteration,0.15307185888290406,False,64,64
+Stochastic Value Iteration,0.36962371587753295,True,66,87

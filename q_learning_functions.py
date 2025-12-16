@@ -48,6 +48,22 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
             if delta > max_delta:
                 max_delta = delta
 
+            # Need this to account for staying in the same state -> can't happen naturally in 
+            prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(state)))) # get probabilities
+            choice = random.random()
+            if choice <= prob_success:
+                next_state = next_state # successful transition
+            elif choice > prob_success and choice <= prob_success + prob_stay:
+                next_state = state # stay
+            else:
+                current_range = prob_success + prob_stay
+                for o in graph.neighbors(state):
+                    if o != next_state: # make sure that the desired action is not taken into account
+                        if choice > current_range and choice <= current_range + prob_other:
+                            next_state = o
+                            break
+                        else: current_range += prob_other
+
             state = next_state
             if state in goal_region:
                 break
