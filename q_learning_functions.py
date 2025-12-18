@@ -11,7 +11,7 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
     Q = {}
     for n in graph.nodes:
         for m in graph.neighbors(n):
-            Q[(n, m)] = -1.0E7 # TODO: investigate value, very sensitive to it
+            Q[(n, m)] = -1.0E4 # TODO: investigate value, very sensitive to it
     
     # Epsilon decay
     epsilon = 0.1 # = initial_epsilon

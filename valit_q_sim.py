@@ -14,59 +14,72 @@ radius = 1 # neightborhood radius (1 = four-neighbors)
 # examples = [10,12]
 # exnum = examples[0] # example number
 
-N = 100
+N = 1000
 
 for ex in range(int(num_of_ex)):
     graph, p1index, p2index, obstacles, goal_indices = init_problem(problines, ex, dims, radius)
 
     algorithms = [
-        # (q_learning_path_reward, (graph, p1index, goal_indices), 
-        #  "Normal Q-learning (reward, discounting, stochastic approximation and termination goal)"),
+        # Note: if discount factor is 0.99, it doesn't work, even if learning rate is 0.999
+        (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.5, 0.999), 
+         "Normal Q-learning (reward, discounting, stochastic approximation (aplha = 0.5) and termination goal)"),
 
-        # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 1),
-        #  "No-discounting Q-learning"),
+        (q_learning_path_reward, (graph, p1index, goal_indices), 
+         "Normal Q-learning (reward, discounting, stochastic approximation and termination goal)"),
 
-        # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 1, 1),
-        #  "No-discounting, no stochastic approximation Q-learning"),
+        (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.9999), 
+         "Normal Q-learning (reward, higher discounting, stochastic approximation and termination goal)"),
 
-        # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1),
-        #  "cost-based Q-learning (No discounting, no stochastic approximation)"),
+        (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 1),
+         "No-discounting Q-learning"),
 
-        # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, True),
-        #  "cost-based Q-learning (No discounting, no stochastic approximation) w/ term action & term goal"),
+        (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 1, 1),
+         "No-discounting, no stochastic approximation Q-learning"),
+        
+        (q_learning_path, (graph, p1index, goal_indices),
+         "cost-based Q-learning (discounting, stochastic approximation and termination goal)"),
 
-        # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, True, False),
-        #  "cost-based Q-learning (No discounting, no stochastic approximation, no term goal) w/ term action"),
+        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 1),
+         "cost-based no-discounting Q-learning"),
 
-        # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, False, False),
-        #  "cost-based Q-learning (No discounting, no stochastic approximation, no termination at all)"),
+        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1),
+         "cost-based Q-learning (No discounting, no stochastic approximation)"),
 
-        # (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0.1, True, True, "random"),
-        #  "Fully-random exploration Q-learning"),
+        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, True),
+         "cost-based Q-learning (No discounting, no stochastic approximation) w/ term action & term goal"),
 
-        # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, True, True, "greedy"),
-        #  "Fully-greedy exploration Q-learning"),
+        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, True, False),
+         "cost-based Q-learning (No discounting, no stochastic approximation, no term goal) w/ term action"),
 
-        # (q_learning_path, (graph, p1index, goal_indices, 1, int(4e5), 1, 1, 0.1, True, False, "random"),
-        #  "One-episode random-exploration Q-learning"),
+        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, False, False),
+         "cost-based Q-learning (No discounting, no stochastic approximation, no termination at all)"),
 
-        # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, True, True, "greedy", True),
-        #  "Fully-greedy Q-learning with convergence"),
+        (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0.1, True, True, "random"),
+         "Fully-random exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal"),
 
-        # (q_learning_dc_path, (graph, p1index, goal_indices),
-        #  "Don't care Q-learning"),
+        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, True, True, "greedy"),
+         "Fully-greedy exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal"),
+
+        (q_learning_path, (graph, p1index, goal_indices, 1, int(4e5), 1, 1, 0.1, True, False, "random"),
+         "One-episode random-exploration Q-learning(No discounting, no stochastic approximation) w/ term action only"),
+
+        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, True, True, "greedy", True),
+         "Fully-greedy Q-learning with convergence (No discounting, no stochastic approximation) w/ term action & term goal"),
+
+        (q_learning_dc_path, (graph, p1index, goal_indices),
+         "Don't care Q-learning"),
 
         (q_learning_stochastic_path, (graph, p1index, goal_indices),
          "Stochastic Q-learning (converging)"),
 
-        # (valit_path, (graph, p1index, goal_indices),
-        #  "Value Iteration"),
+        (valit_path, (graph, p1index, goal_indices),
+         "Value Iteration"),
 
-        # (random_valit_path, (graph, p1index, goal_indices, False),
-        #  "Random Action Value Iteration"),
+        (random_valit_path, (graph, p1index, goal_indices, False),
+         "Random Action Value Iteration"),
 
-        # (prob_valit, (graph, p1index, goal_indices),
-        #  "Stochastic Value Iteration"),
+        (prob_valit, (graph, p1index, goal_indices),
+         "Stochastic Value Iteration"),
     ]
 
     example_results = []
