@@ -29,23 +29,29 @@ def init_problem(problines, exnum, dims, radius):
 
 
 def find_path(graph, p1index, p2index, algorithm, args, kwargs = None):
-    length = 0
+    euclidean_distance = 0
     has_path = False
+    goal_in_path = False
+    path = {}
+    path_length = 0.0
+    num_iterations_or_episodes = 0
+    num_actions_taken = 0
     #Since the graph is undirected, this is equivalent to checking if there is a path from p1index to any of the goal_indices
     if nx.has_path(graph,p1index,p2index):
         t = time.time()
         if kwargs == None:
-            path = algorithm(*args)
+            num_iterations_or_episodes, num_actions_taken, path = algorithm(*args)
         else:
-            path = algorithm(*args, **kwargs)
+            num_iterations_or_episodes, num_actions_taken, path = algorithm(*args, **kwargs)
         elapsed_time = time.time() - t
-        shortest_path = str(len(path))
-        for l in range(len(path)):
+        path_length = len(path)
+        if path_length != 0:
+            has_path = True
+            if p2index in path:
+                goal_in_path = True
+
+        for l in range(path_length):
             if l > 0:
                 if graph.get_edge_data(path[l],path[l-1]) is not None: # When there are loops, there is no weight in some cases
-                    length += graph.get_edge_data(path[l],path[l-1])['weight']
-        if (shortest_path != "0"):
-            has_path = True
-        return has_path, path, length, elapsed_time, shortest_path
-    else:
-        return has_path, {}, length, 0.0, "0"
+                    euclidean_distance += graph.get_edge_data(path[l],path[l-1])['weight']
+    return has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken

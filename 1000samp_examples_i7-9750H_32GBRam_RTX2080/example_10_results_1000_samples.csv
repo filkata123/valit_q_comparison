@@ -1,0 +1,21 @@
+Algorithm,Avg Time,Inconsistent?,Best Path,Worst Path
+"Normal Q-learning (reward, discounting, stochastic approximation (aplha = 0.5) and termination goal)",0.47984148406982424,False,64,64
+"Normal Q-learning (reward, discounting, stochastic approximation and termination goal)",0.3599456255435944,False,64,64
+"Normal Q-learning (reward, higher discounting, stochastic approximation and termination goal)",0.36040778875350954,False,64,64
+No-discounting Q-learning,0.36577554988861083,False,64,64
+"No-discounting, no stochastic approximation Q-learning",0.36843134236335756,False,64,64
+"cost-based Q-learning (discounting, stochastic approximation and termination goal)",0.3634686007499695,False,64,64
+cost-based no-discounting Q-learning,0.36708291149139405,False,64,64
+"cost-based Q-learning (No discounting, no stochastic approximation)",0.3695221490859985,False,64,64
+"cost-based Q-learning (No discounting, no stochastic approximation) w/ term action & term goal",0.3696430857181549,False,64,64
+"cost-based Q-learning (No discounting, no stochastic approximation, no term goal) w/ term action",1.6983022871017457,False,64,64
+"cost-based Q-learning (No discounting, no stochastic approximation, no termination at all)",1.8990239934921265,False,0,0
+"Fully-random exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal",9.443293824911118,False,64,64
+"Fully-greedy exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal",0.38048881912231447,False,64,64
+"One-episode random-exploration Q-learning(No discounting, no stochastic approximation) w/ term action only",1.3352562890052795,False,64,64
+"Fully-greedy Q-learning with convergence (No discounting, no stochastic approximation) w/ term action & term goal",0.20021438503265382,False,64,64
+Don't care Q-learning,6.516523855209351,True,66,98
+Stochastic Q-learning (converging),0.234356915473938,True,64,53171
+Value Iteration,0.027255762815475464,False,64,64
+Random Action Value Iteration,0.14871016478538512,False,64,64
+Stochastic Value Iteration,0.361212908744812,True,64,91

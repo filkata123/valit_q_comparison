@@ -15,6 +15,7 @@ def random_valit_path(graph, init, goal_region, epsilon_greedy = False):
         set_node_attributes(graph, {goal:0.0}, 'value') # This is the termination action, although it is not an action to speak of.
     
     # main loop
+    num_actions = 0
     i = 0
     nodes_updated = get_node_attributes(graph, "updated")
     while i < max_valits:
@@ -33,6 +34,7 @@ def random_valit_path(graph, init, goal_region, epsilon_greedy = False):
                     )
             step_cost = graph.get_edge_data(chosen_n,m)['weight']
             cost = graph.nodes[chosen_n]['value'] + step_cost
+            num_actions += 1
 
             best_cost = failure_cost
             best_n = m
@@ -63,7 +65,7 @@ def random_valit_path(graph, init, goal_region, epsilon_greedy = False):
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return path
+    return i, num_actions, path
 
 def prob_valit(graph, init, goal_region):
     # initialize values
@@ -73,6 +75,7 @@ def prob_valit(graph, init, goal_region):
         set_node_attributes(graph, {goal:0.0}, 'value')
     
     # main loop
+    num_actions = 0
     i = 0
     max_change = failure_cost
     while i < max_valits and max_change > 0.0:
@@ -91,6 +94,7 @@ def prob_valit(graph, init, goal_region):
                 # sum up expected costs and multiply by updated chosen probability
                 for o in graph.neighbors(m):
                     if o != n: #make sure that the current node is not taken into account
+                        num_actions += 1
                         cost = cost + graph.nodes[o]['value'] * prob_other
 
                 # add weight to summed up cost    
@@ -135,7 +139,7 @@ def prob_valit(graph, init, goal_region):
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return path
+    return i, num_actions, path
 
 # Below code is taken from:
 # Robot Planning Python Library (RPPL)
@@ -149,6 +153,7 @@ def valit_path(graph, init, goal_region):
     for goal in goal_region:
         set_node_attributes(graph, {goal:0.0}, 'value') # This is the termination action, although it is not an action to speak of.
     
+    num_actions = 0
     # main loop
     i = 0
     max_change = failure_cost
@@ -158,6 +163,7 @@ def valit_path(graph, init, goal_region):
             best_cost = failure_cost
             best_n = m
             for n in graph.neighbors(m):
+                num_actions += 1
                 step_cost = graph.get_edge_data(n,m)['weight']
                 cost = graph.nodes[n]['value'] + step_cost
                 if cost < best_cost:
@@ -182,4 +188,4 @@ def valit_path(graph, init, goal_region):
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return path
+    return i, num_actions, path

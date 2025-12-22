@@ -2,6 +2,7 @@ from valit_q_testbed_helper import init_problem, find_path
 from q_learning_functions import *
 from valit_functions import *
 import csv
+import numpy as np 
 
 # get example list
 problem = open('problem_circles.txt')
@@ -14,7 +15,7 @@ radius = 1 # neightborhood radius (1 = four-neighbors)
 # examples = [10,12]
 # exnum = examples[0] # example number
 
-N = 1000
+N = 100
 
 for ex in range(int(num_of_ex)):
     graph, p1index, p2index, obstacles, goal_indices = init_problem(problines, ex, dims, radius)
@@ -64,7 +65,7 @@ for ex in range(int(num_of_ex)):
          "One-episode random-exploration Q-learning(No discounting, no stochastic approximation) w/ term action only"),
 
         (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, True, True, "greedy", True),
-         "Fully-greedy Q-learning with convergence (No discounting, no stochastic approximation) w/ term action & term goal"),
+         "Fully-greedy Q-learning with convergence (No discounting, no stochastic approximation) w/ term action & term goal (best case)"),
 
         (q_learning_dc_path, (graph, p1index, goal_indices),
          "Don't care Q-learning"),
@@ -86,37 +87,57 @@ for ex in range(int(num_of_ex)):
 
     for (algorithm, args, info) in algorithms:
         avg_time = 0
-        prev_shortest_path = 0
-        inconsistent = False
-        worst_path = None
-        best_path = None
+        longest_path = None
+        shortest_path = None
+        goal_reached_consistently = True
+        time_array = []
+        iterations_array = []
+        num_actions_array = []
         
         for i in range (N):
-            has_path, path_literal, length, elapsed_time, shortest_path = find_path(graph, p1index,p2index, algorithm, args)
+            has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken  = find_path(graph, p1index,p2index, algorithm, args)
 
-             # record min/max
-            path_length = len(path_literal)
-            if best_path is None or path_length < best_path:
-                best_path = path_length
-            if worst_path is None or path_length > worst_path:
-                worst_path = path_length
+            # record min/max
+            if shortest_path is None or path_length < shortest_path:
+                shortest_path = path_length
+            if longest_path is None or path_length > longest_path:
+                longest_path = path_length
 
-            if i > 0:
-                if shortest_path != prev_shortest_path:
-                    inconsistent = True # to be expected in ["prob_valit", "q_learning_stochastic_path", "q_learning_dc_path"]
-            
-            prev_shortest_path = shortest_path
-            avg_time += elapsed_time
+            if goal_in_path == False:
+                goal_reached_consistently = False
+
+            time_array.append(elapsed_time)
+            iterations_array.append(num_iterations_or_episodes)
+            num_actions_array.append(num_actions_taken)
                 
-        avg_time = avg_time/N
+        avg_time = np.average(time_array)
+        var_time = np.var(time_array)
+        std_time = np.std(time_array)
+
+        avg_iter = np.average(iterations_array)
+        var_iter = np.var(iterations_array)
+        std_iter = np.std(iterations_array)
+
+        avg_action_count = np.average(num_actions_array)
+        var_action_count = np.var(num_actions_array)
+        std_action_count = np.std(num_actions_array)
+
         example_results.append({
             "algorithm": info,
+            "goal_reached_consistently": goal_reached_consistently,
             "avg_time": avg_time,
-            "inconsistent": inconsistent,
-            "best_path": best_path,
-            "worst_path": worst_path
+            "var_time" : var_time,
+            "std_time" : std_time,
+            "avg_iter": avg_iter,
+            "var_iter" : var_iter,
+            "std_iter" : std_iter,
+            "avg_action_count": avg_action_count,
+            "var_action_count" : var_action_count,
+            "std_action_count" : std_action_count,
+            "shortest_path": shortest_path,
+            "longest_path": longest_path
         })
-        print(f"Example {ex}: {info} | avg_time={avg_time:.4f}s | path={shortest_path} | inconsistent={inconsistent}")
+        print(f"Example {ex}: {info} | Goal reached consistently? -> {goal_reached_consistently} | avg_time={avg_time:.4f}s | var_time={var_time:.4f}s | std_time={std_time:.4f}s | avg_act_count={avg_action_count} | shortest_path={shortest_path}")
 
     # -----------------------------
     # Save CSV file for this example
@@ -125,14 +146,22 @@ for ex in range(int(num_of_ex)):
 
     with open(csv_filename, "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["Algorithm", "Avg Time", "Inconsistent?", "Best Path", "Worst Path"])
+        writer.writerow(["Algorithm", "Goal reached", "Avg Time", "Var Time", "STD Time", "Avg Iterations" ,"Var Iterations", "STD iterations", "Avg action count" ,"Var action count", "STD action count", "Shortest Path", "Longest Path"])
 
         for r in example_results:
             writer.writerow([
                 r["algorithm"],
+                r["goal_reached_consistently"],
                 r["avg_time"],
-                r["inconsistent"],
-                r["best_path"],
-                r["worst_path"]
+                r["var_time"],
+                r["std_time"],
+                r["avg_iter"],
+                r["var_iter"],
+                r["std_iter"],
+                r["avg_action_count"],
+                r["var_action_count"],
+                r["std_action_count"],
+                r["shortest_path"],
+                r["longest_path"]
             ])
 

@@ -19,6 +19,8 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
     # Convergence criterion
     convergence_threshold = 1e-4
 
+    num_actions = 0
+
     # Iteratively update Q-table values
     for episode in range(episodes):
         state = init
@@ -63,7 +65,8 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
                             next_state = o
                             break
                         else: current_range += prob_other
-
+                        
+            num_actions += 1
             state = next_state
             if state in goal_region:
                 break
@@ -100,7 +103,7 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
         current = next_node
     for goal in goal_region:
         graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return path if current in goal_region else []
+    return episode, num_actions, path
 
 # Compute solution path from Q-table
 def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000, initial_epsilon=1):
@@ -116,7 +119,7 @@ def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000,
     for goal in goal_region:
         Q[(goal, goal)] = 0.0 # goal state attractor. Works only in DC q-learning here since it's better than all other values.
 
-    
+    num_actions = 0
     # Epsilon decay
     epsilon = 0.1 # = initial_epsilon
 
@@ -147,6 +150,7 @@ def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000,
             if min_q_next is not None:
                 Q[(state, action)] = cost + min_q_next
 
+            num_actions += 1
             state = next_state
             if state in goal_region:
                 break
@@ -173,7 +177,7 @@ def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000,
     for n in graph.nodes:
         graph.remove_edge(n, n) # clean up self-loops
 
-    return path if current in goal_region else []
+    return episode, num_actions, path
 
 # Compute solution path from Q-table
 def q_learning_path(graph, init, goal_region, 
@@ -195,7 +199,9 @@ def q_learning_path(graph, init, goal_region,
     epsilon = initial_epsilon
 
     # Convergence criterion
-    convergence_threshold = 1e-4
+    convergence_threshold = 0.0
+
+    num_actions = 0
 
     # Iteratively update Q-table values
     for episode in range(episodes):
@@ -231,6 +237,8 @@ def q_learning_path(graph, init, goal_region,
             delta = abs(Q[(state, action)] - old_q)
             if delta > max_delta:
                 max_delta = delta
+            
+            num_actions += 1
 
             state = next_state
             if t_goal and state in goal_region:
@@ -238,11 +246,10 @@ def q_learning_path(graph, init, goal_region,
         
         # If the values in the Q-table haven't changed by a lot, some sort of soft convergence has been reached
         if convergence:
-            if max_delta < convergence_threshold:
+            if max_delta == convergence_threshold:
                 #print(f"Q-learning converged at episode {episode}")
                 break
-
-    #print(Q)
+    
     # Extract path from learned Q-values
     path = [init]
     current = init
@@ -261,7 +268,7 @@ def q_learning_path(graph, init, goal_region,
     if t_action:
         for goal in goal_region:
             graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return path if current in goal_region else []
+    return episode, num_actions, path
 
 # Chooser that uses digits of Pi to make choices. Works for any base up to 10.
 class PiChooser:
@@ -302,6 +309,8 @@ def q_learning_path_reward(graph, init, goal_region, episodes=1000, max_steps=50
     # Convergence criterion
     convergence_threshold = 1e-4
 
+    num_actions = 0
+
     # Iteratively update Q-table values
     for episode in range(episodes):
         state = init
@@ -335,6 +344,7 @@ def q_learning_path_reward(graph, init, goal_region, episodes=1000, max_steps=50
             if delta > max_delta:
                 max_delta = delta
 
+            num_actions += 1
             state = next_state
             if state in goal_region:
                 break
@@ -347,7 +357,6 @@ def q_learning_path_reward(graph, init, goal_region, episodes=1000, max_steps=50
         
         # for epsilon decay
         # epsilon = max(0.05, initial_epsilon * decay_rate**episode)
-
 
     # Extract path from learned Q-values
     path = [init]
@@ -366,4 +375,4 @@ def q_learning_path_reward(graph, init, goal_region, episodes=1000, max_steps=50
         current = next_node
     # for goal in goal_region:
     #     graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return path if current in goal_region else []
+    return episode, num_actions, path

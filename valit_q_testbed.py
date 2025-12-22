@@ -33,7 +33,7 @@ def draw_discs(dlist,screen):
     for d in dlist:
         pygame.draw.circle(screen,grey,[d[0],d[1]],d[2])
 
-def draw_pygame(graph, obstacles, p1index, has_path, path, length, goal_indices):
+def draw_pygame(graph, obstacles, p1index, has_path, path, euclidean_distance, goal_indices):
     xmax = 800 # force a square environment
     ymax = 800
     screen = pygame.display.set_mode([xmax,ymax])
@@ -47,7 +47,7 @@ def draw_pygame(graph, obstacles, p1index, has_path, path, length, goal_indices)
         for l in range(len(path)):
             if l > 0:
                 pygame.draw.line(screen,green,G.nodes[path[l]]['point'],G.nodes[path[l-1]]['point'],5)
-        pygame.display.set_caption('Grid Planner, Euclidean Distance: ' +str(length))
+        pygame.display.set_caption('Grid Planner, Euclidean Distance: ' +str(euclidean_distance))
     else:
         print('Path not found')
         pygame.display.set_caption('Grid Planner')
@@ -65,13 +65,18 @@ def Draw():
     global G
     G, p1index, p2index, obstacles, goal_indices = init_problem(problines, exnum, dims, radius)
     if use_qlearning:
-        has_path, path, length, elapsed_time, shortest_path = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices))
+        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions = find_path(G, p1index,p2index, q_learning_path, (G, p1index, goal_indices, 1000, 500, 1, 1, 0.1, True, True, "greedy", True))
         print('Q-learning:   time elapsed:     ' + str(elapsed_time) + ' seconds')
+        print("Number of episodes: " + str(num_iterations_or_episodes))
     else:
-        has_path, path, length, elapsed_time, shortest_path = find_path(G, p1index,p2index, prob_valit, (G, p1index, goal_indices))
+        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions = find_path(G, p1index,p2index, valit_path, (G, p1index, goal_indices))
         print('value iteration:   time elapsed:     ' + str(elapsed_time) + ' seconds')
-    print("Shortest path: " + shortest_path)
-    draw_pygame(G, obstacles, p1index, has_path, path, length, goal_indices)
+        print("Number of iterations: " + str(num_iterations_or_episodes))
+    if goal_in_path:
+        print("Goal reached!")
+    print("Number of actions taken overall: " + str(num_actions))
+    print("Shortest path found: " + str(path_length))
+    draw_pygame(G, obstacles, p1index, has_path, path, euclidean_distance, goal_indices)
         
 # get example list
 problem = open('problem_circles.txt')
