@@ -79,7 +79,10 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
     # Extract path from learned Q-values
     path = [init]
     current = init
+    has_loop = False
+    visited = set()
     while current not in goal_region:
+        visited.add(current)
         neighbors = list(graph.neighbors(current))
         if not neighbors:
             #print("No neighbors found.")
@@ -99,11 +102,13 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
                         next_node = o
                         break
                     else: current_range += prob_other
+        if not has_loop and next_node in visited:
+                has_loop = True # we don't break here since it is okay to have a loop in the probabilistic case
         path.append(next_node)
         current = next_node
     for goal in goal_region:
         graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return episode, num_actions, path
+    return episode, num_actions, path, has_loop
 
 # Compute solution path from Q-table
 def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000, initial_epsilon=1):
@@ -160,6 +165,7 @@ def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000,
     path = [init]
     current = init
     visited = set()
+    has_loop = False
     while current not in goal_region:
         visited.add(current)
         neighbors = list(graph.neighbors(current))
@@ -169,7 +175,7 @@ def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000,
             break
         next_node = min(valid_neighbors, key=lambda a: Q.get((current, a), float('inf')))
         if next_node in visited:
-            print("Loop detected in Q-table. No path to goal available.")
+            has_loop = True
             break # avoid loops
         path.append(next_node)
         current = next_node
@@ -177,7 +183,7 @@ def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000,
     for n in graph.nodes:
         graph.remove_edge(n, n) # clean up self-loops
 
-    return episode, num_actions, path
+    return episode, num_actions, path, has_loop
 
 # Compute solution path from Q-table
 def q_learning_path(graph, init, goal_region, 
@@ -254,6 +260,7 @@ def q_learning_path(graph, init, goal_region,
     path = [init]
     current = init
     visited = set()
+    has_loop = False
     while current not in goal_region:
         visited.add(current)
         neighbors = list(graph.neighbors(current))
@@ -261,14 +268,14 @@ def q_learning_path(graph, init, goal_region,
             break
         next_node = min(neighbors, key=lambda a: Q.get((current, a), float('inf')))
         if next_node in visited:
-            #print("Loop detected in Q-table. No path to goal available.")
+            has_loop = True
             break # avoid loops
         path.append(next_node)
         current = next_node
     if t_action:
         for goal in goal_region:
             graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return episode, num_actions, path
+    return episode, num_actions, path, has_loop
 
 # Chooser that uses digits of Pi to make choices. Works for any base up to 10.
 class PiChooser:
@@ -362,6 +369,7 @@ def q_learning_path_reward(graph, init, goal_region, episodes=1000, max_steps=50
     path = [init]
     current = init
     visited = set()
+    has_loop = False
     while current not in goal_region:
         visited.add(current)
         neighbors = list(graph.neighbors(current))
@@ -369,10 +377,10 @@ def q_learning_path_reward(graph, init, goal_region, episodes=1000, max_steps=50
             break
         next_node = max(neighbors, key=lambda a: Q.get((current, a), float('-inf')))
         if next_node in visited:
-            print("Loop detected in Q-table. No path to goal available.")
+            has_loop = True
             break  # avoid loops
         path.append(next_node)
         current = next_node
     # for goal in goal_region:
     #     graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return episode, num_actions, path
+    return episode, num_actions, path, has_loop

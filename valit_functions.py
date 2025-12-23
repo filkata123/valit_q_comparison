@@ -6,7 +6,7 @@ from prob_model import probability_model
 failure_cost = 1.0E30
 max_valits = 1000
 
-def random_valit_path(graph, init, goal_region, epsilon_greedy = False):
+def random_valit_path(graph, init, goal_region, epsilon_greedy = False, gamma = 1):
     # initialize values
     for n in graph.nodes:
         set_node_attributes(graph, {n:failure_cost}, 'value')
@@ -33,7 +33,7 @@ def random_valit_path(graph, init, goal_region, epsilon_greedy = False):
                         key=lambda n: graph.nodes[n]["value"] + graph.get_edge_data(n,m)['weight']
                     )
             step_cost = graph.get_edge_data(chosen_n,m)['weight']
-            cost = graph.nodes[chosen_n]['value'] + step_cost
+            cost = gamma * graph.nodes[chosen_n]['value'] + step_cost
             num_actions += 1
 
             best_cost = failure_cost
@@ -58,16 +58,22 @@ def random_valit_path(graph, init, goal_region, epsilon_greedy = False):
         path.append(init)
         goal_reached = False
         current_node = init
+        has_loop = False
+        visited = set()
         while not goal_reached:
+            visited.add(current_node)
             nn = graph.nodes[current_node]['next']
+            if nn in visited:
+                has_loop = True
+                break
             path.append(nn)
             current_node = nn
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return i, num_actions, path
+    return i, num_actions, path, has_loop
 
-def prob_valit(graph, init, goal_region):
+def prob_valit(graph, init, goal_region, gamma = 1):
     # initialize values
     for n in graph.nodes:
         set_node_attributes(graph, {n:failure_cost}, 'value')
@@ -88,14 +94,14 @@ def prob_valit(graph, init, goal_region):
                 # Get edge count
                 prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(m))))
                 
-                cost = graph.nodes[n]['value'] * prob_success # multiply by success probability
-                cost = cost + graph.nodes[m]['value'] * prob_stay # multiply by stay probability
+                cost = gamma * graph.nodes[n]['value'] * prob_success # multiply by success probability
+                cost = cost + gamma * graph.nodes[m]['value'] * prob_stay # multiply by stay probability
 
                 # sum up expected costs and multiply by updated chosen probability
                 for o in graph.neighbors(m):
                     if o != n: #make sure that the current node is not taken into account
                         num_actions += 1
-                        cost = cost + graph.nodes[o]['value'] * prob_other
+                        cost = cost + gamma * graph.nodes[o]['value'] * prob_other
 
                 # add weight to summed up cost    
                 step_cost = graph.get_edge_data(n,m)['weight']
@@ -118,7 +124,10 @@ def prob_valit(graph, init, goal_region):
         path.append(init)
         goal_reached = False
         current_node = init
+        has_loop = False
+        visited = set()
         while not goal_reached:
+            visited.add(current_node)
             desired = graph.nodes[current_node]['next'] # select our desired node
             prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(current_node)))) # get probabilities
             choice = random.random()
@@ -134,19 +143,21 @@ def prob_valit(graph, init, goal_region):
                             nn = o
                             break
                         else: current_range += prob_other
+            if not has_loop and nn in visited:
+                has_loop = True # we don't break here since it is okay to have a loop in the probabilistic case
             path.append(nn)
             current_node = nn
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return i, num_actions, path
+    return i, num_actions, path, has_loop
 
 # Below code is taken from:
 # Robot Planning Python Library (RPPL)
 # Copyright (c) 2021 Alexander J. LaValle. All rights reserved.
 # This software is distributed under the simplified BSD license.
 # Compute the stationary cost-to-go function and return a solution path.
-def valit_path(graph, init, goal_region):
+def valit_path(graph, init, goal_region, gamma = 1):
     # initialize values
     for n in graph.nodes:
         set_node_attributes(graph, {n:failure_cost}, 'value')
@@ -165,7 +176,7 @@ def valit_path(graph, init, goal_region):
             for n in graph.neighbors(m):
                 num_actions += 1
                 step_cost = graph.get_edge_data(n,m)['weight']
-                cost = graph.nodes[n]['value'] + step_cost
+                cost = gamma * graph.nodes[n]['value'] + step_cost
                 if cost < best_cost:
                     best_cost = cost
                     best_n = n
@@ -180,12 +191,18 @@ def valit_path(graph, init, goal_region):
     if graph.nodes[init]['value'] < failure_cost:
         path.append(init)
         goal_reached = False
+        visited = set()
         current_node = init
+        has_loop = False
         while not goal_reached:
+            visited.add(current_node)
             nn = graph.nodes[current_node]['next']
+            if nn in visited:
+                has_loop = True
+                break
             path.append(nn)
             current_node = nn
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return i, num_actions, path
+    return i, num_actions, path, has_loop

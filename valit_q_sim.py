@@ -15,7 +15,7 @@ radius = 1 # neightborhood radius (1 = four-neighbors)
 # examples = [10,12]
 # exnum = examples[0] # example number
 
-N = 100
+N = 2
 
 for ex in range(int(num_of_ex)):
     graph, p1index, p2index, obstacles, goal_indices = init_problem(problines, ex, dims, radius)
@@ -90,12 +90,13 @@ for ex in range(int(num_of_ex)):
         longest_path = None
         shortest_path = None
         goal_reached_consistently = True
+        loops_encountered = False
         time_array = []
         iterations_array = []
         num_actions_array = []
         
         for i in range (N):
-            has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken  = find_path(graph, p1index,p2index, algorithm, args)
+            has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop  = find_path(graph, p1index,p2index, algorithm, args)
 
             # record min/max
             if shortest_path is None or path_length < shortest_path:
@@ -105,6 +106,9 @@ for ex in range(int(num_of_ex)):
 
             if goal_in_path == False:
                 goal_reached_consistently = False
+            
+            if has_loop:
+                loops_encountered = True
 
             time_array.append(elapsed_time)
             iterations_array.append(num_iterations_or_episodes)
@@ -125,6 +129,7 @@ for ex in range(int(num_of_ex)):
         example_results.append({
             "algorithm": info,
             "goal_reached_consistently": goal_reached_consistently,
+            "loops_encountered" : loops_encountered,
             "avg_time": avg_time,
             "var_time" : var_time,
             "std_time" : std_time,
@@ -137,7 +142,7 @@ for ex in range(int(num_of_ex)):
             "shortest_path": shortest_path,
             "longest_path": longest_path
         })
-        print(f"Example {ex}: {info} | Goal reached consistently? -> {goal_reached_consistently} | avg_time={avg_time:.4f}s | var_time={var_time:.4f}s | std_time={std_time:.4f}s | avg_act_count={avg_action_count} | shortest_path={shortest_path}")
+        print(f"Example {ex}: {info} | Goal reached consistently? -> {goal_reached_consistently} | Encountered loops? -> {loops_encountered} | avg_time={avg_time:.4f}s | var_time={var_time:.4f}s | std_time={std_time:.4f}s | avg_act_count={avg_action_count} | shortest_path={shortest_path}")
 
     # -----------------------------
     # Save CSV file for this example
@@ -146,12 +151,13 @@ for ex in range(int(num_of_ex)):
 
     with open(csv_filename, "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["Algorithm", "Goal reached", "Avg Time", "Var Time", "STD Time", "Avg Iterations" ,"Var Iterations", "STD iterations", "Avg action count" ,"Var action count", "STD action count", "Shortest Path", "Longest Path"])
+        writer.writerow(["Algorithm", "Goal reached","Loops encountered", "Avg Time", "Var Time", "STD Time", "Avg Iterations" ,"Var Iterations", "STD iterations", "Avg action count" ,"Var action count", "STD action count", "Shortest Path", "Longest Path"])
 
         for r in example_results:
             writer.writerow([
                 r["algorithm"],
                 r["goal_reached_consistently"],
+                r["loops_encountered"],
                 r["avg_time"],
                 r["var_time"],
                 r["std_time"],
