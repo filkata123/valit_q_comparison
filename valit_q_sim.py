@@ -46,25 +46,25 @@ for ex in range(int(num_of_ex)):
         (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1),
          "cost-based Q-learning (No discounting, no stochastic approximation)"),
 
-        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, True),
+        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True),
          "cost-based Q-learning (No discounting, no stochastic approximation) w/ term action & term goal"),
 
-        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, True, False),
+        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, False),
          "cost-based Q-learning (No discounting, no stochastic approximation, no term goal) w/ term action"),
 
-        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, False, False),
+        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, False, False),
          "cost-based Q-learning (No discounting, no stochastic approximation, no termination at all)"),
 
-        (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0.1, True, True, "random"),
+        (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random"),
          "Fully-random exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal"),
 
-        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, True, True, "greedy"),
+        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "greedy"),
          "Fully-greedy exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal"),
 
-        (q_learning_path, (graph, p1index, goal_indices, 1, int(4e5), 1, 1, 0.1, True, False, "random"),
+        (q_learning_path, (graph, p1index, goal_indices, 1, int(4e5), 1, 1, 0, True, False, "random"),
          "One-episode random-exploration Q-learning(No discounting, no stochastic approximation) w/ term action only"),
 
-        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, True, True, "greedy", True),
+        (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "greedy", True),
          "Fully-greedy Q-learning with convergence (No discounting, no stochastic approximation) w/ term action & term goal (best case)"),
 
         (q_learning_dc_path, (graph, p1index, goal_indices),

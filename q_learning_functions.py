@@ -2,7 +2,7 @@ import random
 from prob_model import probability_model
 
 # Compute solution path from Q-table
-def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_steps=500, alpha=1, gamma=1, initial_epsilon=1):
+def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_steps=500, alpha=1, gamma=1):
     # Add an edge from the goal state to itself with 0 weight (termination action)
     for goal in goal_region:
         graph.add_edge(goal, goal, weight=0.0)
@@ -11,10 +11,10 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
     Q = {}
     for n in graph.nodes:
         for m in graph.neighbors(n):
-            Q[(n, m)] = -1.0E4 # TODO: investigate value, very sensitive to it
+            Q[(n, m)] = 0
     
     # Epsilon decay
-    epsilon = 0.1 # = initial_epsilon
+    epsilon = 0.1
 
     # Convergence criterion
     convergence_threshold = 1e-4
@@ -187,7 +187,7 @@ def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000,
 
 # Compute solution path from Q-table
 def q_learning_path(graph, init, goal_region, 
-                    episodes=1000, max_steps=500, alpha=0.999, gamma=0.999, initial_epsilon=0.1, 
+                    episodes=1000, max_steps=500, alpha=0.999, gamma=0.999, initial_values=0, 
                     t_action = False, t_goal = True,
                     exploration_policy = "epsilon-greedy", convergence = False):
     # Add an edge from the goal state to itself with 0 weight (termination action)
@@ -199,10 +199,10 @@ def q_learning_path(graph, init, goal_region,
     Q = {}
     for n in graph.nodes:
         for m in graph.neighbors(n):
-            Q[(n, m)] = 1.0E4 # TODO: investigate value, very sensitive to it
+            Q[(n, m)] = initial_values
     
     # Epsilon decay
-    epsilon = initial_epsilon
+    epsilon = 0.1
 
     # Convergence criterion
     convergence_threshold = 0.0
@@ -300,24 +300,22 @@ class PiChooser:
 chooser = PiChooser("pi1k_base4.txt")
 
 # Compute solution path from Q-table
-def q_learning_path_reward(graph, init, goal_region, episodes=1000, max_steps=500, alpha=0.999, gamma=0.999, initial_epsilon=1, deterministic = False):
+def q_learning_path_reward(graph, init, goal_region, episodes=1000, max_steps=500, alpha=0.999, gamma=0.999, initial_values=0, deterministic = False):
     #for goal in goal_region:
     #   graph.add_edge(goal, goal, weight=0.0)
     # Populate Q-table with zeros
     Q = {}
     for u in graph.nodes:
         for v in graph.neighbors(u):
-            Q[(u, v)] = -1.0E4
+            Q[(u, v)] = initial_values
 
     # Epsilon decay
-    epsilon = 0.1 # = initial_epsilon
-    # decay_rate = 0.9999
+    epsilon = 0.1
 
     # Convergence criterion
     convergence_threshold = 1e-4
 
     num_actions = 0
-
     # Iteratively update Q-table values
     for episode in range(episodes):
         state = init
