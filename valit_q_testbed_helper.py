@@ -34,6 +34,7 @@ def find_path(graph, p1index, p2index, algorithm, args, kwargs = None):
     goal_in_path = False
     path = {}
     path_length = 0.0
+    elapsed_time = 0
     num_iterations_or_episodes = 0
     num_actions_taken = 0
     #Since the graph is undirected, this is equivalent to checking if there is a path from p1index to any of the goal_indices
