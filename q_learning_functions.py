@@ -33,11 +33,26 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
                 break
 
             if random.random() < epsilon:
-                action = random.choice(neighbors) # in this case, the random action takes into account the stochasticity of the environment
+                action = random.choice(neighbors)
             else:
                 action = min(neighbors, key=lambda a: Q.get((state, a), 0.0))
             cost = graph[state][action]['weight']
-            next_state = action
+
+            # Need this to account for staying in the same state -> can't happen naturally
+            prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(state)))) # get probabilities
+            choice = random.random()
+            if choice <= prob_success:
+                next_state = action # successful transition
+            elif choice > prob_success and choice <= prob_success + prob_stay:
+                next_state = state # stay
+            else:
+                current_range = prob_success + prob_stay
+                for o in graph.neighbors(state):
+                    if o != action: # make sure that the desired action is not taken into account
+                        if choice > current_range and choice <= current_range + prob_other:
+                            next_state = o
+                            break
+                        else: current_range += prob_other
 
             next_neighbors = list(graph.neighbors(next_state))
             min_q_next = min([Q.get((next_state, a), 1.0E10) for a in next_neighbors]) if next_neighbors else 0
@@ -49,23 +64,7 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
             delta = abs(Q[(state, action)] - old_q)
             if delta > max_delta:
                 max_delta = delta
-
-            # Need this to account for staying in the same state -> can't happen naturally in 
-            prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(state)))) # get probabilities
-            choice = random.random()
-            if choice <= prob_success:
-                next_state = next_state # successful transition
-            elif choice > prob_success and choice <= prob_success + prob_stay:
-                next_state = state # stay
-            else:
-                current_range = prob_success + prob_stay
-                for o in graph.neighbors(state):
-                    if o != next_state: # make sure that the desired action is not taken into account
-                        if choice > current_range and choice <= current_range + prob_other:
-                            next_state = o
-                            break
-                        else: current_range += prob_other
-                        
+          
             num_actions += 1
             state = next_state
             if state in goal_region:
@@ -81,6 +80,7 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
     current = init
     has_loop = False
     visited = set()
+    i = 0
     while current not in goal_region:
         visited.add(current)
         neighbors = list(graph.neighbors(current))
@@ -106,6 +106,9 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
                 has_loop = True # we don't break here since it is okay to have a loop in the probabilistic case
         path.append(next_node)
         current = next_node
+        if i >= 100000: # we break here since we don't want to get stuck in an infinite loop
+            break
+        i += 1
     for goal in goal_region:
         graph.remove_edge(goal, goal) # clean up self-loop at goal
     return episode, num_actions, path, has_loop
@@ -351,6 +354,8 @@ def q_learning_path_reward(graph, init, goal_region, episodes=1000, max_steps=50
 
             num_actions += 1
             state = next_state
+            # print(Q)
+            # input("Press nter")
             if state in goal_region:
                 break
         

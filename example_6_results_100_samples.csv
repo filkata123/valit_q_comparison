@@ -1,0 +1,50 @@
+Algorithm,Goal reached,Loops encountered,Avg Time,Var Time,STD Time,Avg Iterations,Var Iterations,STD iterations,Avg action count,Var action count,STD action count,Shortest Path,Longest Path
+"Normal Q-learning (reward, alpha = 0.3, gamma = 0.6 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.6, gamma = 0.6 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.9, gamma = 0.6 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.999, gamma = 0.6 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.999, gamma = 0.9 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.999, gamma = 0.9 and termination goal, initial values = -1e4)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = -1e4)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.2, gamma = 0.999 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.999, gamma = 0.5 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = +1e4)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = +1e7)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+No-discounting Q-learning,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"No-discounting, no stochastic approximation Q-learning",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (reward, alpha = 0.999, gamma = 0.9 and termination goal, initial values = +1e4)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = +1e4)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = -1e4)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = -1e7)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+cost-based no-discounting Q-learning,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based Q-learning (No discounting, no stochastic approximation)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based Q-learning (No discounting, no stochastic approximation) w/ term action & term goal",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based Q-learning (No discounting, no stochastic approximation, no term goal) w/ term action",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based Q-learning (No discounting, no stochastic approximation, no termination at all)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Fully-random exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Fully-greedy exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"One-episode random-exploration Q-learning(No discounting, no stochastic approximation) w/ term action only",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Fully-greedy Q-learning with convergence (No discounting, no stochastic approximation) w/ term action & term goal (best case)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Don't care Q-learning,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Stochastic-problem Q-learning (converging, no discounting, no stochastic approximation)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Stochastic-problem Q-learning (converging, no stochastic approximation, gamma = 0.6)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Stochastic-problem Q-learning (converging, no stochastic approximation, gamma = 0.6)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Stochastic-problem Q-learning (converging, no discounting, alpha = 0.2)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Stochastic-problem Q-learning (converging, alpha = 0.7, gamma = 0.7)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Stochastic-problem Q-learning (converging, alpha = 0.9, gamma = 0.9)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Value Iteration,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Discounted Value Iteration - gamma = 0.8,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Discounted Value Iteration - gamma = 0.6,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Discounted Value Iteration - gamma = 0.5,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Stochastic Value Iteration,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Discounted Stochastic Value Iteration - gamma = 0.8,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Discounted Stochastic Value Iteration - gamma = 0.6,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Random Action Value Iteration,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Random Action Discounted Value Iteration - gamma = 0.8,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Random Action Discounted Value Iteration - gamma = 0.6,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Random Action Discounted Value Iteration - gamma = 0.5,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Random Action Discounted Value Iteration - gamma = 0.5,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Q-factor Value Iteration,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Q-factor Stochastic Value Iteration,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0

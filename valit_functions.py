@@ -126,6 +126,7 @@ def prob_valit(graph, init, goal_region, gamma = 1):
         current_node = init
         has_loop = False
         visited = set()
+        j = 0
         while not goal_reached:
             visited.add(current_node)
             desired = graph.nodes[current_node]['next'] # select our desired node
@@ -147,6 +148,9 @@ def prob_valit(graph, init, goal_region, gamma = 1):
                 has_loop = True # we don't break here since it is okay to have a loop in the probabilistic case
             path.append(nn)
             current_node = nn
+            if j >= 100000: # we break here since we don't want to get stuck in an infinite loop
+                break
+            j += 1
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
