@@ -1,3 +1,4 @@
+import networkx as nx
 from networkx.classes.function import get_node_attributes, set_node_attributes
 import random
 from prob_model import probability_model
@@ -5,6 +6,56 @@ from prob_model import probability_model
 # value iteration constants
 failure_cost = 1.0E30
 max_valits = 1000
+
+def model_free_dijkstra(graph, init, goal_region):
+    # system identification I guess
+    rebuilt_graph = nx.Graph()
+    
+    visited_nodes = set()
+    explored_edges = set()
+    stack = []
+
+    current = init
+    visited_nodes.add(current)
+    rebuilt_graph
+    
+    while True:
+        found_unexplored_edge = False
+
+        for neighbor in graph.neighbors(current):
+            edge = frozenset({current, neighbor}) # frozenset = unordered set
+            
+            if edge not in explored_edges:
+                found_unexplored_edge = True
+
+                explored_edges.add(edge)
+                attr = graph[current][neighbor]
+                rebuilt_graph.add_edge(current, neighbor, **attr)
+
+                stack.append(current)
+                current = neighbor
+
+                if current not in visited_nodes:
+                    visited_nodes.add(current)
+                    rebuilt_graph.add_node(current)
+                break # we don't need to go try other edges
+        
+        if not found_unexplored_edge:
+            # Nothing left to explore
+            if not stack:
+                break
+            current = stack.pop()
+    
+    try:
+        path = nx.dijkstra_path(rebuilt_graph, init, goal_region[0])
+    except nx.NetworkXNoPath:
+        path = []
+        print("No path found!")
+    return 0, 0, path, False
+
+
+
+
 
 def random_valit_path(graph, init, goal_region, epsilon_greedy = False, gamma = 1):
     # initialize values
