@@ -53,10 +53,6 @@ def model_free_dijkstra(graph, init, goal_region):
         print("No path found!")
     return 0, 0, path, False
 
-
-
-
-
 def random_valit_path(graph, init, goal_region, epsilon_greedy = False, gamma = 1):
     # initialize values
     for n in graph.nodes:

@@ -48,3 +48,4 @@ Random Action Discounted Value Iteration - gamma = 0.5,False,False,0.0,0.0,0.0,0
 Random Action Discounted Value Iteration - gamma = 0.5,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 Q-factor Value Iteration,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 Q-factor Stochastic Value Iteration,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Model-free Dijkstra,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0

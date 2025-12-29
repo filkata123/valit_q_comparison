@@ -192,7 +192,7 @@ def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000,
 def q_learning_path(graph, init, goal_region, 
                     episodes=1000, max_steps=500, alpha=0.999, gamma=0.999, initial_values=0, 
                     t_action = False, t_goal = True,
-                    exploration_policy = "epsilon-greedy", convergence = False):
+                    exploration_policy = "epsilon-greedy", convergence = False, deterministic = False):
     # Add an edge from the goal state to itself with 0 weight (termination action)
     if t_action:
         for goal in goal_region:
@@ -224,12 +224,12 @@ def q_learning_path(graph, init, goal_region,
                 break
             
             if exploration_policy == "random":
-                action = random.choice(neighbors)
+                action = chooser.choose(neighbors) if deterministic else random.choice(neighbors)
             elif exploration_policy == "greedy":
                 action = min(neighbors, key=lambda a: Q.get((state, a), 0.0))
             else: # epsilon-greedy
                 if random.random() < epsilon:
-                    action = random.choice(neighbors)
+                    action = chooser.choose(neighbors) if deterministic else random.choice(neighbors)
                 else:
                     action = min(neighbors, key=lambda a: Q.get((state, a), 0.0))
 
@@ -285,9 +285,9 @@ class PiChooser:
     def __init__(self, filename):
         # Load pi digits from file
         with open(filename, "r") as f:
-            self.pi_digits = f.read().strip()
-        self.index = 0  # keep track of which digit we’re on
-
+            self.pi_digits = f.read(10000000).strip()
+        self.index = random.randint(0, len(self.pi_digits)-1)  # keep track of which digit we’re on
+        
     def choose(self, neighbors):
         if not neighbors:
             return None
@@ -300,7 +300,7 @@ class PiChooser:
         choice = neighbors[digit % len(neighbors)]
         return choice
 
-chooser = PiChooser("pi1k_base4.txt")
+chooser = PiChooser("pi_base4_100m.txt")
 
 # Compute solution path from Q-table
 def q_learning_path_reward(graph, init, goal_region, episodes=1000, max_steps=500, alpha=0.999, gamma=0.999, initial_values=0, deterministic = False):

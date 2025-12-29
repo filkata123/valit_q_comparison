@@ -18,7 +18,7 @@ radius = 1 # neightborhood radius (1 = four-neighbors)
 N = 100
 
 def main():
-    for ex in range(12, int(num_of_ex)):
+    for ex in range(0, int(num_of_ex)):
         graph, p1index, p2index, obstacles, goal_indices = init_problem(problines, ex, dims, radius)
 
         algorithms = [
@@ -172,6 +172,9 @@ def main():
 
             (q_prob_valit, (graph, p1index, goal_indices),
             "Q-factor Stochastic Value Iteration"),
+
+            (model_free_dijkstra, (graph, p1index, goal_indices),
+            "Model-free Dijkstra"),
         ]
 
         example_results = []
