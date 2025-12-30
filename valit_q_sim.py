@@ -22,159 +22,246 @@ def main():
         graph, p1index, p2index, obstacles, goal_indices = init_problem(problines, ex, dims, radius)
 
         algorithms = [
-            (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.3, 0.6),
-             "Normal Q-learning (reward, alpha = 0.3, gamma = 0.6 and termination goal, initial values = 0)"),
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.001, 0.01),
+            #  "Normal Q-learning (reward, alpha = 0.001, gamma = 0.01 and termination goal, initial values = 0)"),
 
-            (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.6, 0.6), 
-             "Normal Q-learning (reward, alpha = 0.6, gamma = 0.6 and termination goal, initial values = 0)"),
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.01, 0.001),
+            #  "Normal Q-learning (reward, alpha = 0.01, gamma = 0.001 and termination goal, initial values = 0)"),
 
-            (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.9, 0.6), 
-             "Normal Q-learning (reward, alpha = 0.9, gamma = 0.6 and termination goal, initial values = 0)"),
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.01, 0.01),
+            #  "Normal Q-learning (reward, alpha = 0.01, gamma = 0.01 and termination goal, initial values = 0)"),
 
-            (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.6), 
-             "Normal Q-learning (reward, alpha = 0.999, gamma = 0.6 and termination goal, initial values = 0)"),
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.1, 0.1),
+            #  "Normal Q-learning (reward, alpha = 0.1, gamma = 0.1 and termination goal, initial values = 0)"),
 
-            (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.9), 
-             "Normal Q-learning (reward, alpha = 0.999, gamma = 0.9 and termination goal, initial values = 0)"),
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.3, 0.1),
+            #  "Normal Q-learning (reward, alpha = 0.3, gamma = 0.1 and termination goal, initial values = 0)"),
 
-            (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.9, -1e4), 
-             "Normal Q-learning (reward, alpha = 0.999, gamma = 0.9 and termination goal, initial values = -1e4)"),
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.3, 0.5),
+            #  "Normal Q-learning (reward, alpha = 0.3, gamma = 0.5 and termination goal, initial values = 0)"),
 
-            (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999, -1e4), 
-             "Normal Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = -1e4)"),
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.3, 0.6),
+            #  "Normal Q-learning (reward, alpha = 0.3, gamma = 0.6 and termination goal, initial values = 0)"),
 
-            # With values of either alpha or gamma below 0.3 and 0.6 respectively we need to greatly increase the steps and episodes to get consistent paths to goal
-            (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.2, 0.999),
-             "Normal Q-learning (reward, alpha = 0.2, gamma = 0.999 and termination goal, initial values = 0)"),
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.6, 0.6), 
+            #  "Normal Q-learning (reward, alpha = 0.6, gamma = 0.6 and termination goal, initial values = 0)"),
 
-            (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.5),
-             "Normal Q-learning (reward, alpha = 0.999, gamma = 0.5 and termination goal, initial values = 0)"),
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.9, 0.6), 
+            #  "Normal Q-learning (reward, alpha = 0.9, gamma = 0.6 and termination goal, initial values = 0)"),
 
-            (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999), 
-             "Normal Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = 0)"),
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.6), 
+            #  "Normal Q-learning (reward, alpha = 0.999, gamma = 0.6 and termination goal, initial values = 0)"),
 
-            (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999, 1e4), 
-             "Normal Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = +1e4)"),
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.9), 
+            #  "Normal Q-learning (reward, alpha = 0.999, gamma = 0.9 and termination goal, initial values = 0)"),
 
-            (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999, 1e7), 
-             "Normal Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = +1e7)"),
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.9, -1e4), 
+            #  "Normal Q-learning (reward, alpha = 0.999, gamma = 0.9 and termination goal, initial values = -1e4)"),
 
-            (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 1),
-             "No-discounting Q-learning"),
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999, -1e4), 
+            #  "Normal Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = -1e4)"),
 
-            (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 1, 1),
-             "No-discounting, no stochastic approximation Q-learning"),
+            # # With values of either alpha or gamma below 0.3 and 0.6 respectively we need to greatly increase the steps and episodes to get consistent paths to goal
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.2, 0.999),
+            #  "Normal Q-learning (reward, alpha = 0.2, gamma = 0.999 and termination goal, initial values = 0)"),
 
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.9, 1e4), 
-             "cost-based  Q-learning (reward, alpha = 0.999, gamma = 0.9 and termination goal, initial values = +1e4)"),
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.5),
+            #  "Normal Q-learning (reward, alpha = 0.999, gamma = 0.5 and termination goal, initial values = 0)"),
 
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999, 1e4), 
-             "cost-based  Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = +1e4)"),
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999), 
+            #  "Normal Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = 0)"),
+
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999, 1e4), 
+            #  "Normal Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = +1e4)"),
+
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999, 1e7), 
+            #  "Normal Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = +1e7)"),
+
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.999, 1),
+            #  "No-discounting Q-learning"),
+
+            # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 1, 1),
+            #  "No-discounting, no stochastic approximation Q-learning"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.001, 0.01),
+             "cost-based  Q-learning (alpha = 0.001, gamma = 0.01 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.01, 0.001),
+             "cost-based  Q-learning (alpha = 0.01, gamma = 0.001 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.01, 0.01),
+             "cost-based  Q-learning (alpha = 0.01, gamma = 0.01 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.1, 0.1),
+             "cost-based  Q-learning (alpha = 0.1, gamma = 0.1 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.3, 0.1),
+             "cost-based  Q-learning (alpha = 0.3, gamma = 0.1 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.3, 0.5),
+             "cost-based  Q-learning (alpha = 0.3, gamma = 0.5 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.3, 0.6),
+             "cost-based  Q-learning (alpha = 0.3, gamma = 0.6 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.6, 0.6), 
+             "cost-based  Q-learning (alpha = 0.6, gamma = 0.6 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.9, 0.6), 
+             "cost-based  Q-learning (alpha = 0.9, gamma = 0.6 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.6), 
+             "cost-based  Q-learning (alpha = 0.999, gamma = 0.6 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.9), 
+             "cost-based  Q-learning (alpha = 0.999, gamma = 0.9 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.2, 0.999),
+             "cost-based  Q-learning (alpha = 0.2, gamma = 0.999 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.5),
+             "cost-based  Q-learning (alpha = 0.999, gamma = 0.5 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.1),
+             "cost-based  Q-learning (alpha = 0.999, gamma = 0.1 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.01),
+             "cost-based  Q-learning (alpha = 0.999, gamma = 0.01 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.001),
+             "cost-based  Q-learning (alpha = 0.999, gamma = 0.001 and termination goal, initial values = 0)"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.0001),
+             "cost-based  Q-learning (alpha = 0.999, gamma = 0.0001 and termination goal, initial values = 0)"),
+
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.9, 1e4), 
+            #  "cost-based  Q-learning (alpha = 0.999, gamma = 0.9 and termination goal, initial values = +1e4)"),
+
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999, 1e4), 
+            #  "cost-based  Q-learning (alpha = 0.999, gamma = 0.999 and termination goal, initial values = +1e4)"),
             
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999),
-             "cost-based Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = 0)"),
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999),
+            #  "cost-based Q-learning (alpha = 0.999, gamma = 0.999 and termination goal, initial values = 0)"),
 
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999, -1e4), 
-             "cost-based Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = -1e4)"),
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999, -1e4), 
+            #  "cost-based Q-learning (alpha = 0.999, gamma = 0.999 and termination goal, initial values = -1e4)"),
 
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999, -1e7), 
-             "cost-based Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = -1e7)"),
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999, -1e7), 
+            #  "cost-based Q-learning (alpha = 0.999, gamma = 0.999 and termination goal, initial values = -1e7)"),
 
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 1),
-             "cost-based no-discounting Q-learning"),
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 1),
+            #  "cost-based Q-learning (no-discounting, alpha = 0.999)"),
 
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1),
-             "cost-based Q-learning (No discounting, no stochastic approximation)"),
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1),
+            #  "cost-based Q-learning (No discounting, no stochastic approximation)"),
 
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True),
-             "cost-based Q-learning (No discounting, no stochastic approximation) w/ term action & term goal"),
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True),
+            #  "cost-based Q-learning (No discounting, no stochastic approximation) w/ term action & term goal"),
 
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, False),
-             "cost-based Q-learning (No discounting, no stochastic approximation, no term goal) w/ term action"),
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, False),
+            #  "cost-based Q-learning (No discounting, no stochastic approximation, no term goal) w/ term action"),
 
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, False, False),
-             "cost-based Q-learning (No discounting, no stochastic approximation, no termination at all)"),
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, False, False),
+            #  "cost-based Q-learning (No discounting, no stochastic approximation, no termination at all)"),
 
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random"),
-             "Fully-random exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal"),
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random"),
+            #  "Fully-random exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal"),
 
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "greedy"),
-             "Fully-greedy exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal"),
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "greedy"),
+            #  "Fully-greedy exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal"),
 
-            (q_learning_path, (graph, p1index, goal_indices, 1, int(4e5), 1, 1, 0, True, False, "random"),
-             "One-episode random-exploration Q-learning(No discounting, no stochastic approximation) w/ term action only"),
+            # (q_learning_path, (graph, p1index, goal_indices, 1, int(4e5), 1, 1, 0, True, False, "random"),
+            #  "One-episode random-exploration Q-learning(No discounting, no stochastic approximation) w/ term action only"),
 
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "greedy", True),
-             "Fully-greedy Q-learning with convergence (No discounting, no stochastic approximation) w/ term action & term goal (best case)"),
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "greedy", True),
+            #  "Fully-greedy Q-learning with convergence (No discounting, no stochastic approximation) w/ term action & term goal (best case)"),
 
-            (q_learning_dc_path, (graph, p1index, goal_indices),
-             "Don't care Q-learning"),
+            # (q_learning_dc_path, (graph, p1index, goal_indices),
+            #  "Don't care Q-learning"),
 
-            (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 1, 1),
-             "Stochastic-problem Q-learning (converging, no discounting, no stochastic approximation)"),
+            # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 1, 1),
+            #  "Stochastic-problem Q-learning (converging, no discounting, no stochastic approximation)"),
 
-            # N.B. At gamma 0.5 we sometimes get a very very slow result, so we do not test that
-            (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 1, 0.6),
-            "Stochastic-problem Q-learning (converging, no stochastic approximation, gamma = 0.6)"),
+            # # N.B. At gamma 0.5 we sometimes get a very very slow result, so we do not test that
+            # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 1, 0.6),
+            # "Stochastic-problem Q-learning (converging, no stochastic approximation, gamma = 0.6)"),
 
-            (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 1, 0.9),
-            "Stochastic-problem Q-learning (converging, no stochastic approximation, gamma = 0.6)"),
+            # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 1, 0.9),
+            # "Stochastic-problem Q-learning (converging, no stochastic approximation, gamma = 0.6)"),
 
-            (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 0.2, 1),
-            "Stochastic-problem Q-learning (converging, no discounting, alpha = 0.2)"),
+            # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 0.2, 1),
+            # "Stochastic-problem Q-learning (converging, no discounting, alpha = 0.2)"),
 
-            (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 0.7, 0.7),
-            "Stochastic-problem Q-learning (converging, alpha = 0.7, gamma = 0.7)"),
+            # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 0.7, 0.7),
+            # "Stochastic-problem Q-learning (converging, alpha = 0.7, gamma = 0.7)"),
 
-            (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 0.9, 0.9),
-            "Stochastic-problem Q-learning (converging, alpha = 0.9, gamma = 0.9)"),
+            # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 0.9, 0.9),
+            # "Stochastic-problem Q-learning (converging, alpha = 0.9, gamma = 0.9)"),
 
-            (valit_path, (graph, p1index, goal_indices),
-            "Value Iteration"),
+            # (valit_path, (graph, p1index, goal_indices),
+            # "Value Iteration"),
 
-            (valit_path, (graph, p1index, goal_indices, 0.8),
-            "Discounted Value Iteration - gamma = 0.8"),
+            # (valit_path, (graph, p1index, goal_indices, 0.8),
+            # "Discounted Value Iteration - gamma = 0.8"),
 
-            (valit_path, (graph, p1index, goal_indices, 0.6),
-            "Discounted Value Iteration - gamma = 0.6"),
+            # (valit_path, (graph, p1index, goal_indices, 0.6),
+            # "Discounted Value Iteration - gamma = 0.6"),
 
-            (valit_path, (graph, p1index, goal_indices, 0.5),
-            "Discounted Value Iteration - gamma = 0.5"),
+            # (valit_path, (graph, p1index, goal_indices, 0.5),
+            # "Discounted Value Iteration - gamma = 0.5"),
 
-            (prob_valit, (graph, p1index, goal_indices),
-            "Stochastic Value Iteration"),
+            # (valit_path, (graph, p1index, goal_indices, 0.3),
+            # "Discounted Value Iteration - gamma = 0.3"),
 
-            (prob_valit, (graph, p1index, goal_indices, 0.8),
-            "Discounted Stochastic Value Iteration - gamma = 0.8"),
+            # (valit_path, (graph, p1index, goal_indices, 0.1),
+            # "Discounted Value Iteration - gamma = 0.1"),
 
-            (prob_valit, (graph, p1index, goal_indices, 0.6),
-            "Discounted Stochastic Value Iteration - gamma = 0.6"),
+            # (valit_path, (graph, p1index, goal_indices, 0.01),
+            # "Discounted Value Iteration - gamma = 0.01"),
 
-            # N.B. At gamma 0.5 we sometimes get a very very slow result, so we do not test that here as well
+            # (valit_path, (graph, p1index, goal_indices, 0.0001),
+            # "Discounted Value Iteration - gamma = 0.0001"),
 
-            (random_valit_path, (graph, p1index, goal_indices, False),
-            "Random Action Value Iteration"),
+            # (valit_path, (graph, p1index, goal_indices, 0.00001),
+            # "Discounted Value Iteration - gamma = 0.00001"),
 
-            (random_valit_path, (graph, p1index, goal_indices, False, 0.8),
-            "Random Action Discounted Value Iteration - gamma = 0.8"),
+            # (valit_path, (graph, p1index, goal_indices, 0.000001),
+            # "Discounted Value Iteration - gamma = 0.000001"),
 
-            (random_valit_path, (graph, p1index, goal_indices, False, 0.6),
-            "Random Action Discounted Value Iteration - gamma = 0.6"),
+            # (prob_valit, (graph, p1index, goal_indices),
+            # "Stochastic Value Iteration"),
 
-            (random_valit_path, (graph, p1index, goal_indices, False, 0.5),
-            "Random Action Discounted Value Iteration - gamma = 0.5"),
+            # (prob_valit, (graph, p1index, goal_indices, 0.8),
+            # "Discounted Stochastic Value Iteration - gamma = 0.8"),
 
-            (random_valit_path, (graph, p1index, goal_indices, False, 0.5),
-            "Random Action Discounted Value Iteration - gamma = 0.5"),
+            # (prob_valit, (graph, p1index, goal_indices, 0.6),
+            # "Discounted Stochastic Value Iteration - gamma = 0.6"),
 
-            (q_valit_path, (graph, p1index, goal_indices),
-            "Q-factor Value Iteration"),
+            # # N.B. At gamma 0.5 we sometimes get a very very slow result, so we do not test that here as well
 
-            (q_prob_valit, (graph, p1index, goal_indices),
-            "Q-factor Stochastic Value Iteration"),
+            # (random_valit_path, (graph, p1index, goal_indices, False),
+            # "Random Action Value Iteration"),
 
-            (model_free_dijkstra, (graph, p1index, goal_indices),
-            "Model-free Dijkstra"),
+            # (random_valit_path, (graph, p1index, goal_indices, False, 0.8),
+            # "Random Action Discounted Value Iteration - gamma = 0.8"),
+
+            # (random_valit_path, (graph, p1index, goal_indices, False, 0.6),
+            # "Random Action Discounted Value Iteration - gamma = 0.6"),
+
+            # (random_valit_path, (graph, p1index, goal_indices, False, 0.5),
+            # "Random Action Discounted Value Iteration - gamma = 0.5"),
+
+            # (random_valit_path, (graph, p1index, goal_indices, False, 0.5),
+            # "Random Action Discounted Value Iteration - gamma = 0.5"),
+
+            # (q_valit_path, (graph, p1index, goal_indices),
+            # "Q-factor Value Iteration"),
+
+            # (q_prob_valit, (graph, p1index, goal_indices),
+            # "Q-factor Stochastic Value Iteration"),
+
+            # (model_free_dijkstra, (graph, p1index, goal_indices),
+            # "Model-free Dijkstra"),
         ]
 
         example_results = []

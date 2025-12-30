@@ -1,4 +1,10 @@
 Algorithm,Goal reached,Loops encountered,Avg Time,Var Time,STD Time,Avg Iterations,Var Iterations,STD iterations,Avg action count,Var action count,STD action count,Shortest Path,Longest Path
+"Normal Q-learning (reward, alpha = 0.001, gamma = 0.01 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.01, gamma = 0.001 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.01, gamma = 0.01 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.1, gamma = 0.1 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.3, gamma = 0.1 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Normal Q-learning (reward, alpha = 0.3, gamma = 0.5 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 "Normal Q-learning (reward, alpha = 0.3, gamma = 0.6 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 "Normal Q-learning (reward, alpha = 0.6, gamma = 0.6 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 "Normal Q-learning (reward, alpha = 0.9, gamma = 0.6 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
@@ -13,6 +19,23 @@ Algorithm,Goal reached,Loops encountered,Avg Time,Var Time,STD Time,Avg Iteratio
 "Normal Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = +1e7)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 No-discounting Q-learning,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 "No-discounting, no stochastic approximation Q-learning",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.001, gamma = 0.01 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.01, gamma = 0.001 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.01, gamma = 0.01 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.1, gamma = 0.1 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.3, gamma = 0.1 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.3, gamma = 0.5 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.3, gamma = 0.6 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.6, gamma = 0.6 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.9, gamma = 0.6 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.999, gamma = 0.6 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.999, gamma = 0.9 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.2, gamma = 0.999 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.999, gamma = 0.5 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.999, gamma = 0.1 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.999, gamma = 0.01 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.999, gamma = 0.001 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based  Q-learning (alpha = 0.999, gamma = 0.0001 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 "cost-based  Q-learning (reward, alpha = 0.999, gamma = 0.9 and termination goal, initial values = +1e4)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 "cost-based  Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = +1e4)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 "cost-based Q-learning (reward, alpha = 0.999, gamma = 0.999 and termination goal, initial values = 0)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
@@ -38,6 +61,12 @@ Value Iteration,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 Discounted Value Iteration - gamma = 0.8,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 Discounted Value Iteration - gamma = 0.6,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 Discounted Value Iteration - gamma = 0.5,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Discounted Value Iteration - gamma = 0.3,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Discounted Value Iteration - gamma = 0.1,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Discounted Value Iteration - gamma = 0.01,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Discounted Value Iteration - gamma = 0.0001,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Discounted Value Iteration - gamma = 0.00001,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Discounted Value Iteration - gamma = 0.000001,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 Stochastic Value Iteration,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 Discounted Stochastic Value Iteration - gamma = 0.8,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 Discounted Stochastic Value Iteration - gamma = 0.6,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
