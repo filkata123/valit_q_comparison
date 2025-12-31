@@ -65,7 +65,7 @@ def Draw():
     global G
     G, p1index, p2index, obstacles, goal_indices = init_problem(problines, exnum, dims, radius)
     if use_qlearning:
-        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop = find_path(G, p1index,p2index, q_learning_path_reward, (G, p1index, goal_indices, 1000, 500, 0.999, 0.0001))
+        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop = find_path(G, p1index,p2index, q_learning_path, (G, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random", False, True))
         print('Q-learning:   time elapsed:     ' + str(elapsed_time) + ' seconds')
         print("Number of episodes: " + str(num_iterations_or_episodes))
     else:

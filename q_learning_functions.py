@@ -250,6 +250,8 @@ def q_learning_path(graph, init, goal_region,
             num_actions += 1
 
             state = next_state
+            # print(Q)
+            # input("Press nter")
             if t_goal and state in goal_region:
                 break
         
@@ -282,25 +284,38 @@ def q_learning_path(graph, init, goal_region,
 
 # Chooser that uses digits of Pi to make choices. Works for any base up to 10.
 class PiChooser:
-    def __init__(self, filename):
-        # Load pi digits from file
-        with open(filename, "r") as f:
+    def __init__(self, base3_filename ,base4_filename):
+        # base 3 generated with SageMath 
+        # n = 200000
+        # R = RealField(n)
+        # pi_base3 = R(pi).str(base=3)
+        # pi_base3
+        with open(base3_filename, "r") as f:
+            self.pi_digits_3 = f.read().strip()
+        # gotten in a different way
+        with open(base4_filename, "r") as f:
             self.pi_digits = f.read(10000000).strip()
-        self.index = random.randint(0, len(self.pi_digits)-1)  # keep track of which digit we’re on
+        self.index = 0  # keep track of which digit we’re on
+        self.index_3 = 0
         
     def choose(self, neighbors):
         if not neighbors:
             return None
 
-        # Get next digit from pi (cycle back if at end)
-        digit = int(self.pi_digits[self.index])
-        self.index = (self.index + 1) % len(self.pi_digits)
+        if len(neighbors) == 3:
+            digit = int(self.pi_digits_3[self.index_3])
+            self.index_3 = (self.index_3 + 1) % len(self.pi_digits_3)
+        else:
+            # Get next digit from pi (cycle back if at end)
+            digit = int(self.pi_digits[self.index])
+            self.index = (self.index + 1) % len(self.pi_digits)
 
+        
         # Use digit to pick a neighbor
         choice = neighbors[digit % len(neighbors)]
         return choice
 
-chooser = PiChooser("pi_base4_100m.txt")
+chooser = PiChooser("pi_base3_200k.txt","pi_base4_100m.txt")
 
 # Compute solution path from Q-table
 def q_learning_path_reward(graph, init, goal_region, episodes=1000, max_steps=500, alpha=0.999, gamma=0.999, initial_values=0, deterministic = False):

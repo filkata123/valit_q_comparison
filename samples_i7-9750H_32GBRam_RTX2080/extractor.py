@@ -3,24 +3,37 @@
 import pandas as pd
 
 # --- CONFIG ---
-metric = "Avg Time"  #"Avg Time", "Avg action count" or any of the other colum names
-std_metric = "STD Time"  # "STD Time" "STD action count" Corresponding standard deviation column
+metric = "Goal reached"  #"Avg Time", "Avg action count" or any of the other colum names
+std_metric = "STD action count"  # "STD Time" "STD action count" Corresponding standard deviation column
 
 # Mapping from LaTeX table columns to CSV rows (row indices for the 10 parameter settings)
 # You can adjust these indices based on your CSV
+# Discounting v
+# table_indices = [
+#     20,
+#     21,
+#     22,
+#     23,
+#     24,
+#     25,
+#     26,
+#     27,
+#     28,
+#     29,
+#     30,
+#     31,
+#     32,
+#     33,
+#     34,
+#     35,
+#     36,
+#     39,
+#     42,
+#     43
+# ]
+# initial values v
 table_indices = [
-    # 0,  
-    # 1,  
-    # 2,  
-    # 3,  
-    # 4,  
-    # 7,  
-    # 8,  
-    # 9,  
-    # 12, 
-    # 13
-    9,
-    16
+    30,37,38,39,40,41
 ]
 
 # --- LOAD CSV ---
