@@ -1,6 +1,7 @@
 from valit_q_testbed_helper import init_problem, find_path
 from q_learning_functions import *
 from valit_functions import *
+from dijkstra_functions import *
 import csv
 import numpy as np 
 
@@ -167,8 +168,8 @@ def main():
             # (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random"),
             #  "Fully-random exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal"),
 
-            (q_learning_path, (graph,p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random", False, True),
-             "Fully-random (deterministic with pi) exploration Q-learning (No discounting, no stochastic approximation) w/ term action & term goal"),
+            # (q_learning_path, (graph,p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random", False, True),
+            #  "Fully-random (deterministic with pi) exploration Q-learning (No discounting, no stochastic approximation) w/ term action & term goal"),
 
             # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "greedy"),
             #  "Fully-greedy exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal"),
@@ -263,8 +264,8 @@ def main():
             # (q_prob_valit, (graph, p1index, goal_indices),
             # "Q-factor Stochastic Value Iteration"),
 
-            # (model_free_dijkstra, (graph, p1index, goal_indices),
-            # "Model-free Dijkstra"),
+            (model_free_dijkstra, (graph, p1index, goal_indices),
+            "Model-free Dijkstra"),
         ]
 
         example_results = []
