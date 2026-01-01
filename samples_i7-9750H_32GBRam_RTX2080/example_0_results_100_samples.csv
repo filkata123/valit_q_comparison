@@ -47,6 +47,7 @@ cost-based no-discounting Q-learning,TRUE,FALSE,0.13154289722442628,3.8418763661
 "cost-based Q-learning (No discounting, no stochastic approximation, no term goal) w/ term action",TRUE,FALSE,1.810106747150421,0.000646206,0.025420574,999,0,0,500000,0,0,18,18
 "cost-based Q-learning (No discounting, no stochastic approximation, no termination at all)",FALSE,TRUE,1.7131019091606141,0.000647592,0.025447821395456014,999,0,0,500000,0,0,2,15
 "Fully-random exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal",TRUE,FALSE,3.948530607223511,0.056309610001193375,0.23729646015310338,999,0,0,1303577.02,856045386.4995999,29258.253305684535,18,18
+"Fully-random (deterministic with pi) exploration Q-learning (No discounting, no stochastic approximation) w/ term action & term goal",True,False,3.9191738033294676,0.022999408516961375,0.1516555588066635,999.0,0.0,0.0,1285957.09,924914390.9219,30412.405214351264,18,18
 "Fully-greedy exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal",TRUE,FALSE,0.11905464172363281,0.000168659,0.012986862603227263,999,0,0,32129,0,0,18,18
 "One-episode random-exploration Q-learning(No discounting, no stochastic approximation) w/ term action only",TRUE,FALSE,1.1863316869735718,0.006075347,0.077944511,0,0,0,400000,0,0,18,18
 "Fully-greedy Q-learning with convergence (No discounting, no stochastic approximation) w/ term action & term goal (best case)",TRUE,FALSE,0.060044457912445066,2.425145149720151e-05,0.004924576,112,0,0,17050,0,0,18,18

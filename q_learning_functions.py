@@ -212,11 +212,17 @@ def q_learning_path(graph, init, goal_region,
 
     num_actions = 0
 
+    # episode_returns = []
+    # return_window = 10  # number of episodes to compare
+    # return_tol = 0.0    # exact equality is valid in deterministic setting
+            
     # Iteratively update Q-table values
     for episode in range(episodes):
         state = init
         max_delta = 0
-        
+
+        #episode_return = 0.0
+
         for _ in range(max_steps):
             neighbors = list(graph.neighbors(state))
             if not neighbors:
@@ -235,6 +241,7 @@ def q_learning_path(graph, init, goal_region,
 
             cost = graph[state][action]['weight']
             next_state = action
+            #episode_return += cost
 
             next_neighbors = list(graph.neighbors(next_state))
             min_q_next = min([Q.get((next_state, a), 1.0E10) for a in next_neighbors]) if next_neighbors else 0
@@ -254,6 +261,13 @@ def q_learning_path(graph, init, goal_region,
             # input("Press nter")
             if t_goal and state in goal_region:
                 break
+        
+        # episode_returns.append(episode_return)
+        #
+        # if convergence and len(episode_returns) >= return_window:
+        #     recent = episode_returns[-return_window:]
+        #     if max(recent) - min(recent) <= return_tol:
+        #         break
         
         # If the values in the Q-table haven't changed by a lot, some sort of soft convergence has been reached
         if convergence:

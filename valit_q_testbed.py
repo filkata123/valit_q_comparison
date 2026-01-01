@@ -11,6 +11,7 @@ from tkinter import *
 from valit_q_testbed_helper import init_problem, find_path
 from q_learning_functions import *
 from valit_functions import *
+from dijkstra_functions import *
 
 dims = 20 # number of samples per axis
 radius = 1 # neightborhood radius (1 = four-neighbors)
@@ -65,11 +66,11 @@ def Draw():
     global G
     G, p1index, p2index, obstacles, goal_indices = init_problem(problines, exnum, dims, radius)
     if use_qlearning:
-        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop = find_path(G, p1index,p2index, q_learning_path, (G, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random", False, True))
+        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop = find_path(G, p1index,p2index, q_learning_path, (G, p1index, goal_indices))
         print('Q-learning:   time elapsed:     ' + str(elapsed_time) + ' seconds')
         print("Number of episodes: " + str(num_iterations_or_episodes))
     else:
-        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop = find_path(G, p1index,p2index, valit_path, (G, p1index, goal_indices, 0.000001))
+        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop = find_path(G, p1index,p2index, model_free_dijkstra, (G, p1index, goal_indices))
         print('value iteration:   time elapsed:     ' + str(elapsed_time) + ' seconds')
         print("Number of iterations: " + str(num_iterations_or_episodes))
     if goal_in_path:
