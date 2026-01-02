@@ -1,5 +1,21 @@
 import random
 from prob_model import probability_model
+import time
+
+def god_eye_convergence_check(graph, Q, alpha, gamma, t_goal, goal_region):
+    newQ = Q.copy()
+    for n in graph.nodes:
+        if t_goal and n in goal_region:
+            continue
+        for m in graph.neighbors(n):
+            cost = graph[n][m]['weight']
+            next_state = m
+
+            next_neighbors = list(graph.neighbors(next_state))
+            min_q_next = min([newQ.get((next_state, a), 1.0E10) for a in next_neighbors]) if next_neighbors else 0
+
+            newQ[(n, m)] = (1-alpha)*newQ[(n, m)] + alpha * (cost + gamma * min_q_next)
+    return newQ
 
 # Compute solution path from Q-table
 def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_steps=500, alpha=1, gamma=1):
@@ -111,7 +127,7 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
         i += 1
     for goal in goal_region:
         graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return episode, num_actions, path, has_loop
+    return episode, num_actions, path, has_loop, 0.0
 
 # Compute solution path from Q-table
 def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000, initial_epsilon=1):
@@ -186,13 +202,13 @@ def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000,
     for n in graph.nodes:
         graph.remove_edge(n, n) # clean up self-loops
 
-    return episode, num_actions, path, has_loop
+    return episode, num_actions, path, has_loop, 0.0
 
 # Compute solution path from Q-table
 def q_learning_path(graph, init, goal_region, 
                     episodes=1000, max_steps=500, alpha=0.999, gamma=0.999, initial_values=0, 
                     t_action = False, t_goal = True,
-                    exploration_policy = "epsilon-greedy", convergence = False, deterministic = False):
+                    exploration_policy = "epsilon-greedy", convergence = False, deterministic = False, god_eye_convergence = False):
     # Add an edge from the goal state to itself with 0 weight (termination action)
     if t_action:
         for goal in goal_region:
@@ -215,7 +231,8 @@ def q_learning_path(graph, init, goal_region,
     # episode_returns = []
     # return_window = 10  # number of episodes to compare
     # return_tol = 0.0    # exact equality is valid in deterministic setting
-            
+    convergence_check_time = 0.0
+
     # Iteratively update Q-table values
     for episode in range(episodes):
         state = init
@@ -256,6 +273,15 @@ def q_learning_path(graph, init, goal_region,
             
             num_actions += 1
 
+            # Check when the algorithm actually convergence and report for statistics (does not affect algorithm)
+            if god_eye_convergence:
+                t = time.time()
+                if (num_actions != 0 and num_actions % 25500 == 0):
+                    q_values = god_eye_convergence_check(graph, Q, alpha, gamma, t_goal, goal_region)
+                    if Q == q_values:
+                        print("Converged at action " + str(num_actions))
+                convergence_check_time += time.time() - t
+            
             state = next_state
             # print(Q)
             # input("Press nter")
@@ -294,7 +320,7 @@ def q_learning_path(graph, init, goal_region,
     if t_action:
         for goal in goal_region:
             graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return episode, num_actions, path, has_loop
+    return episode, num_actions, path, has_loop, convergence_check_time
 
 # Chooser that uses digits of Pi to make choices. Works for any base up to 10.
 class PiChooser:
@@ -404,4 +430,4 @@ def q_learning_path_reward(graph, init, goal_region, episodes=1000, max_steps=50
         current = next_node
     # for goal in goal_region:
     #     graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return episode, num_actions, path, has_loop
+    return episode, num_actions, path, has_loop, 0.0

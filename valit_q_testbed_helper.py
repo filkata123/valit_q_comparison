@@ -38,14 +38,16 @@ def find_path(graph, p1index, p2index, algorithm, args, kwargs = None):
     num_iterations_or_episodes = 0
     num_actions_taken = 0
     has_loop = False
+    god_eye_convergence_time = 0.0
     #Since the graph is undirected, this is equivalent to checking if there is a path from p1index to any of the goal_indices
     if nx.has_path(graph,p1index,p2index):
         t = time.time()
         if kwargs == None:
-            num_iterations_or_episodes, num_actions_taken, path, has_loop = algorithm(*args)
+            num_iterations_or_episodes, num_actions_taken, path, has_loop, god_eye_convergence_time = algorithm(*args)
         else:
-            num_iterations_or_episodes, num_actions_taken, path, has_loop = algorithm(*args, **kwargs)
+            num_iterations_or_episodes, num_actions_taken, path, has_loop, god_eye_convergence_time = algorithm(*args, **kwargs)
         elapsed_time = time.time() - t
+        elapsed_time = elapsed_time - god_eye_convergence_time
         path_length = len(path)
         if path_length != 0:
             has_path = True
