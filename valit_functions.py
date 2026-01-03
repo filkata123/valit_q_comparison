@@ -71,7 +71,7 @@ def random_valit_path(graph, init, goal_region, epsilon_greedy = False, gamma = 
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return i, num_actions, path, has_loop, 0.0
+    return i, num_actions, path, has_loop, 0.0, 0
 
 def prob_valit(graph, init, goal_region, gamma = 1):
     # initialize values
@@ -154,7 +154,7 @@ def prob_valit(graph, init, goal_region, gamma = 1):
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return i, num_actions, path, has_loop, 0.0
+    return i, num_actions, path, has_loop, 0.0, 0
 
 def q_prob_valit(graph, init, goal_region, gamma = 1):
     # initialize values
@@ -237,7 +237,7 @@ def q_prob_valit(graph, init, goal_region, gamma = 1):
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return i, num_actions, path, has_loop, 0.0
+    return i, num_actions, path, has_loop, 0.0, 0
 
 def q_valit_path(graph, init, goal_region, gamma = 1):
     # initialize values
@@ -292,7 +292,7 @@ def q_valit_path(graph, init, goal_region, gamma = 1):
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return i, num_actions, path, has_loop, 0.0
+    return i, num_actions, path, has_loop, 0.0, 0
 
 # Below code is taken from:
 # Robot Planning Python Library (RPPL)
@@ -347,4 +347,4 @@ def valit_path(graph, init, goal_region, gamma = 1):
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return i, num_actions, path, has_loop, 0.0
+    return i, num_actions, path, has_loop, 0.0, 0

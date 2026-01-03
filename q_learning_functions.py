@@ -1,4 +1,5 @@
 import random
+from collections import defaultdict
 from prob_model import probability_model
 import time
 
@@ -16,6 +17,116 @@ def god_eye_convergence_check(graph, Q, alpha, gamma, t_goal, goal_region):
 
             newQ[(n, m)] = (1-alpha)*newQ[(n, m)] + alpha * (cost + gamma * min_q_next)
     return newQ
+
+def god_eye_convergence_check_stochastic(graph, Q, alpha, gamma, t_goal, goal_region):
+    newQ = Q.copy()
+    for n in graph.nodes:
+        if t_goal and n in goal_region:
+            continue
+        for m in graph.neighbors(n):
+            prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(n))))
+            cost = newQ[(n, m)] * prob_success
+            cost = cost + newQ[(n, n)] * prob_stay
+            for o in graph.neighbors(m):
+                if o != n: #make sure that the current node is not taken into account
+                    cost = cost + newQ[(n, o)] * prob_other
+
+            cost = cost + graph[n][m]['weight'] 
+            next_state = m
+
+            next_neighbors = list(graph.neighbors(next_state))
+            min_q_next = min([newQ.get((next_state, a), 1.0E10) for a in next_neighbors]) if next_neighbors else 0
+
+            newQ[(n, m)] = (1-alpha)*newQ[(n, m)] + alpha * (cost + gamma * min_q_next)
+    return newQ
+
+def q_learning_stochastic_path_new(graph, init, goal_region, episodes=1000, max_steps=500, alpha=1, gamma=1):
+    Q = defaultdict(float) # getting a key from this dict that doesn't exist reutrns 0.0
+    epsilon = 0.1
+    convergence_threshold = 1e-4
+    num_actions = 0
+
+    for episode in range(episodes):
+        state = init
+        max_delta = 0
+
+        for _ in range(max_steps):
+            actions = list(graph.neighbors(state))
+            if not actions:
+                break
+
+            if random.random() < epsilon:
+                action = random.choice(actions)
+            else:
+                action = min(actions, key=lambda action: Q[(state, action)])
+
+            neighbors = list(graph.neighbors(state))
+            prob_success, prob_stay, prob_other = probability_model(len(neighbors))
+            r = random.random()
+
+            if r <= prob_success:
+                next_state = action
+            elif r <= prob_success + prob_stay:
+                next_state = state
+            else:
+                others = [n for n in neighbors if n != action]
+                next_state = random.choice(others)
+
+            cost = graph[state][action]['weight']
+
+            next_actions = list(graph.neighbors(next_state))
+            min_q_next = min(Q[(next_state, a)] for a in next_actions) if next_actions else 0.0
+
+            old_q = Q[(state, action)]
+            Q[(state, action)] += alpha * (cost + gamma * min_q_next - Q[(state, action)])
+
+            delta = abs(Q[(state, action)] - old_q)
+            if delta > max_delta:
+                max_delta = delta
+
+            num_actions += 1
+            state = next_state
+            if state in goal_region:
+                break
+        # If the values in the Q-table haven't changed by a lot, some sort of soft convergence has been reached
+        if max_delta < convergence_threshold:
+            #print(f"Q-learning converged at episode {episode}")
+            break
+    
+
+    path = [init]
+    current = init
+    visited = set()
+    has_loop = False
+
+    while current not in goal_region:
+        actions = list(graph.neighbors(current))
+        if not actions:
+            #print("No neighbors found.")
+            break
+        action = min(actions, key=lambda a: Q[(current, a)])
+
+        neighbors = list(graph.neighbors(current))
+        prob_success, prob_stay, prob_other = probability_model(len(neighbors))
+        r = random.random()
+
+        if r <= prob_success:
+            next_state = action
+        elif r <= prob_success + prob_stay:
+            next_state = current
+        else:
+            others = [n for n in neighbors if n != action]
+            next_state = random.choice(others)
+
+        if next_state in visited:
+            has_loop = True
+
+        visited.add(current)
+        path.append(next_state)
+        current = next_state
+ 
+    return episode, num_actions, path, has_loop, 0.0, 0
+
 
 # Compute solution path from Q-table
 def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_steps=500, alpha=1, gamma=1):
@@ -127,7 +238,7 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
         i += 1
     for goal in goal_region:
         graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return episode, num_actions, path, has_loop, 0.0
+    return episode, num_actions, path, has_loop, 0.0, 0
 
 # Compute solution path from Q-table
 def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000, initial_epsilon=1):
@@ -202,13 +313,13 @@ def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000,
     for n in graph.nodes:
         graph.remove_edge(n, n) # clean up self-loops
 
-    return episode, num_actions, path, has_loop, 0.0
+    return episode, num_actions, path, has_loop, 0.0, 0
 
 # Compute solution path from Q-table
 def q_learning_path(graph, init, goal_region, 
                     episodes=1000, max_steps=500, alpha=0.999, gamma=0.999, initial_values=0, 
                     t_action = False, t_goal = True,
-                    exploration_policy = "epsilon-greedy", convergence = False, deterministic = False, god_eye_convergence = False):
+                    exploration_policy = "epsilon-greedy", convergence = False, deterministic = False, epsilon = 0.1, god_eye_convergence = False):
     # Add an edge from the goal state to itself with 0 weight (termination action)
     if t_action:
         for goal in goal_region:
@@ -219,9 +330,6 @@ def q_learning_path(graph, init, goal_region,
     for n in graph.nodes:
         for m in graph.neighbors(n):
             Q[(n, m)] = initial_values
-    
-    # Epsilon decay
-    epsilon = 0.1
 
     # Convergence criterion
     convergence_threshold = 0.0
@@ -232,6 +340,7 @@ def q_learning_path(graph, init, goal_region,
     # return_window = 10  # number of episodes to compare
     # return_tol = 0.0    # exact equality is valid in deterministic setting
     convergence_check_time = 0.0
+    converged_action = 0
 
     # Iteratively update Q-table values
     for episode in range(episodes):
@@ -279,7 +388,7 @@ def q_learning_path(graph, init, goal_region,
                 if (num_actions != 0 and num_actions % 25500 == 0):
                     q_values = god_eye_convergence_check(graph, Q, alpha, gamma, t_goal, goal_region)
                     if Q == q_values:
-                        print("Converged at action " + str(num_actions))
+                        converged_action = num_actions
                 convergence_check_time += time.time() - t
             
             state = next_state
@@ -294,7 +403,7 @@ def q_learning_path(graph, init, goal_region,
         #     recent = episode_returns[-return_window:]
         #     if max(recent) - min(recent) <= return_tol:
         #         break
-        
+
         # If the values in the Q-table haven't changed by a lot, some sort of soft convergence has been reached
         if convergence:
             if max_delta == convergence_threshold:
@@ -320,7 +429,7 @@ def q_learning_path(graph, init, goal_region,
     if t_action:
         for goal in goal_region:
             graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return episode, num_actions, path, has_loop, convergence_check_time
+    return episode, num_actions, path, has_loop, convergence_check_time, converged_action
 
 # Chooser that uses digits of Pi to make choices. Works for any base up to 10.
 class PiChooser:
@@ -430,4 +539,4 @@ def q_learning_path_reward(graph, init, goal_region, episodes=1000, max_steps=50
         current = next_node
     # for goal in goal_region:
     #     graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return episode, num_actions, path, has_loop, 0.0
+    return episode, num_actions, path, has_loop, 0.0, 0

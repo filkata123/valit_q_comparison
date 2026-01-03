@@ -1,0 +1,7 @@
+Algorithm,Goal reached,Loops encountered,Avg Time,Var Time,STD Time,Avg Iterations,Var Iterations,STD iterations,Avg action count,Var action count,STD action count,Avg convergence time,Var convergence time,STD convergence time,Shortest Path,Longest Path
+"cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.1",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.5",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.9",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1, 500 -> 3000 steps",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"One-episode random-exploration Q-learning true convergence (No discounting, no stochastic approximation) w/ term action only",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0

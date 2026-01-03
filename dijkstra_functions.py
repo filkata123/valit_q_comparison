@@ -88,4 +88,4 @@ def dijkstra_path(graph, init, goal_region):
     path = paths[found_goal]
     has_loop = False
 
-    return i, num_actions, path, has_loop, 0.0
+    return i, num_actions, path, has_loop, 0.0, 0

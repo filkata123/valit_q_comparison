@@ -165,6 +165,24 @@ def main():
             # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, False, False),
             #  "cost-based Q-learning (No discounting, no stochastic approximation, no termination at all)"),
 
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.1, True),
+             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.1"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.5, True),
+             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.5"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.9, True),
+             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.9"),
+            
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "random", False, False, 1, True),
+             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random", False, False, 1, True),
+             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1, 500 -> 3000 steps"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1, int(4e5), 1, 1, 0, True, False, "random", False, False, 1, True),
+             "One-episode random-exploration Q-learning true convergence (No discounting, no stochastic approximation) w/ term action only"),
+
             # (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random"),
             #  "Fully-random exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal"),
 
@@ -183,6 +201,9 @@ def main():
             # (q_learning_dc_path, (graph, p1index, goal_indices),
             #  "Don't care Q-learning"),
 
+            # (q_learning_stochastic_path_new, (graph, p1index, goal_indices, 1000, 500, 1, 1),
+            #  "Stochastic-problem Q-learning (new) (converging, no discounting, no stochastic approximation)"),
+
             # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 1, 1),
             #  "Stochastic-problem Q-learning (converging, no discounting, no stochastic approximation)"),
 
@@ -191,7 +212,7 @@ def main():
             # "Stochastic-problem Q-learning (converging, no stochastic approximation, gamma = 0.6)"),
 
             # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 1, 0.9),
-            # "Stochastic-problem Q-learning (converging, no stochastic approximation, gamma = 0.6)"),
+            # "Stochastic-problem Q-learning (converging, no stochastic approximation, gamma = 0.9)"),
 
             # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 0.2, 1),
             # "Stochastic-problem Q-learning (converging, no discounting, alpha = 0.2)"),
@@ -264,8 +285,8 @@ def main():
             # (q_prob_valit, (graph, p1index, goal_indices),
             # "Q-factor Stochastic Value Iteration"),
 
-            (model_free_dijkstra, (graph, p1index, goal_indices),
-            "Model-free Dijkstra"),
+            # (model_free_dijkstra, (graph, p1index, goal_indices),
+            # "Model-free Dijkstra"),
         ]
 
         example_results = []
@@ -279,9 +300,10 @@ def main():
             time_array = []
             iterations_array = []
             num_actions_array = []
+            converge_actions_array= []
             
             for i in range (N):
-                has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop  = find_path(graph, p1index,p2index, algorithm, args)
+                has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action = find_path(graph, p1index,p2index, algorithm, args)
 
                 # record min/max
                 if shortest_path is None or path_length < shortest_path:
@@ -298,6 +320,7 @@ def main():
                 time_array.append(elapsed_time)
                 iterations_array.append(num_iterations_or_episodes)
                 num_actions_array.append(num_actions_taken)
+                converge_actions_array.append(converged_at_action)
 
             if len(time_array) != 0:    
                 avg_time = np.average(time_array)
@@ -312,6 +335,10 @@ def main():
                 var_action_count = np.var(num_actions_array)
                 std_action_count = np.std(num_actions_array)
 
+                avg_convergence_action = np.average(converge_actions_array)
+                var_convergence_action = np.var(converge_actions_array)
+                std_convergence_action = np.std(converge_actions_array)
+
                 example_results.append({
                     "algorithm": info,
                     "goal_reached_consistently": goal_reached_consistently,
@@ -325,6 +352,9 @@ def main():
                     "avg_action_count": avg_action_count,
                     "var_action_count" : var_action_count,
                     "std_action_count" : std_action_count,
+                    "avg_convergence_action": avg_convergence_action,
+                    "var_convergence_action" : var_convergence_action,
+                    "std_convergence_action" : std_convergence_action,
                     "shortest_path": shortest_path,
                     "longest_path": longest_path
                 })
@@ -343,6 +373,9 @@ def main():
                     "avg_action_count": 0,
                     "var_action_count" : 0,
                     "std_action_count" : 0,
+                    "avg_convergence_action": 0,
+                    "var_convergence_action" : 0,
+                    "std_convergence_action" : 0,
                     "shortest_path": 0,
                     "longest_path": 0
                 })
@@ -355,7 +388,7 @@ def main():
 
         with open(csv_filename, "w", newline="") as f:
             writer = csv.writer(f)
-            writer.writerow(["Algorithm", "Goal reached","Loops encountered", "Avg Time", "Var Time", "STD Time", "Avg Iterations" ,"Var Iterations", "STD iterations", "Avg action count" ,"Var action count", "STD action count", "Shortest Path", "Longest Path"])
+            writer.writerow(["Algorithm", "Goal reached","Loops encountered", "Avg Time", "Var Time", "STD Time", "Avg Iterations" ,"Var Iterations", "STD iterations", "Avg action count" ,"Var action count", "STD action count", "Avg convergence time" ,"Var convergence time", "STD convergence time", "Shortest Path", "Longest Path"])
 
             for r in example_results:
                 writer.writerow([
@@ -371,6 +404,9 @@ def main():
                     r["avg_action_count"],
                     r["var_action_count"],
                     r["std_action_count"],
+                    r["avg_convergence_action"],
+                    r["var_convergence_action"],
+                    r["std_convergence_action"],
                     r["shortest_path"],
                     r["longest_path"]
                 ])
