@@ -40,13 +40,21 @@ def find_path(graph, p1index, p2index, algorithm, args, kwargs = None):
     has_loop = False
     god_eye_convergence_time = 0.0
     converged_at_action = 0
+    visits = {}  # Track state-action visits
     #Since the graph is undirected, this is equivalent to checking if there is a path from p1index to any of the goal_indices
     if nx.has_path(graph,p1index,p2index):
         t = time.time()
         if kwargs == None:
-            num_iterations_or_episodes, num_actions_taken, path, has_loop, god_eye_convergence_time, converged_at_action = algorithm(*args)
+            result = algorithm(*args)
         else:
-            num_iterations_or_episodes, num_actions_taken, path, has_loop, god_eye_convergence_time, converged_at_action = algorithm(*args, **kwargs)
+            result = algorithm(*args, **kwargs)
+        
+        # Unpack result
+        if len(result) == 7: # has visits
+            num_iterations_or_episodes, num_actions_taken, path, has_loop, god_eye_convergence_time, converged_at_action, visits = result
+        else:
+            num_iterations_or_episodes, num_actions_taken, path, has_loop, god_eye_convergence_time, converged_at_action = result
+        
         elapsed_time = time.time() - t
         elapsed_time = elapsed_time - god_eye_convergence_time
         path_length = len(path)
@@ -59,4 +67,5 @@ def find_path(graph, p1index, p2index, algorithm, args, kwargs = None):
             if l > 0:
                 if graph.get_edge_data(path[l],path[l-1]) is not None: # When there are loops, there is no weight in some cases
                     euclidean_distance += graph.get_edge_data(path[l],path[l-1])['weight']
-    return has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action
+    
+    return has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, visits

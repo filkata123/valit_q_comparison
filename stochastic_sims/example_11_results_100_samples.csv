@@ -1,2 +1,0 @@
-Algorithm,Goal reached,Loops encountered,Avg Time,Var Time,STD Time,Avg Iterations,Var Iterations,STD iterations,Avg action count,Var action count,STD action count,Shortest Path,Longest Path
-"Stochastic-problem Q-learning (converging, no discounting, no stochastic approximation)",True,True,0.29628069877624513,0.0004137100147441743,0.02033986270219576,999.0,0.0,0.0,70982.79,2845135.7059,1686.7530067855223,26,555

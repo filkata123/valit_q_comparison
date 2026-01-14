@@ -4,6 +4,7 @@ from valit_functions import *
 from dijkstra_functions import *
 import csv
 import numpy as np 
+from itertools import product
 
 # get example list
 problem = open('problem_circles.txt')
@@ -18,11 +19,12 @@ radius = 1 # neightborhood radius (1 = four-neighbors)
 
 N = 100
 
-def main():
+def run_simulations():
     for ex in range(0, int(num_of_ex)):
         graph, p1index, p2index, obstacles, goal_indices = init_problem(problines, ex, dims, radius)
 
         algorithms = [
+            # # Reward-based Q-learning
             # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 0.001, 0.01),
             #  "Normal Q-learning (reward, alpha = 0.001, gamma = 0.01 and termination goal, initial values = 0)"),
 
@@ -84,6 +86,7 @@ def main():
             # (q_learning_path_reward, (graph, p1index, goal_indices, 1000, 500, 1, 1),
             #  "No-discounting, no stochastic approximation Q-learning"),
 
+            # # Cost-based Q-learning
             # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.001, 0.01),
             #  "cost-based  Q-learning (alpha = 0.001, gamma = 0.01 and termination goal, initial values = 0)"),
 
@@ -149,7 +152,8 @@ def main():
 
             # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 0.999, -1e7), 
             #  "cost-based Q-learning (alpha = 0.999, gamma = 0.999 and termination goal, initial values = -1e7)"),
-
+            
+            # # Cost-based Q-learning no disocunting or no stochastic approximation 
             # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 0.999, 1),
             #  "cost-based Q-learning (no-discounting, alpha = 0.999)"),
 
@@ -164,24 +168,6 @@ def main():
 
             # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, False, False),
             #  "cost-based Q-learning (No discounting, no stochastic approximation, no termination at all)"),
-
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.1, True),
-             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.1"),
-
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.5, True),
-             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.5"),
-
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.9, True),
-             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.9"),
-            
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "random", False, False, 1, True),
-             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1"),
-
-            (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random", False, False, 1, True),
-             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1, 500 -> 3000 steps"),
-
-            (q_learning_path, (graph, p1index, goal_indices, 1, int(4e5), 1, 1, 0, True, False, "random", False, False, 1, True),
-             "One-episode random-exploration Q-learning true convergence (No discounting, no stochastic approximation) w/ term action only"),
 
             # (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random"),
             #  "Fully-random exploration Q-learning(No discounting, no stochastic approximation) w/ term action & term goal"),
@@ -201,9 +187,26 @@ def main():
             # (q_learning_dc_path, (graph, p1index, goal_indices),
             #  "Don't care Q-learning"),
 
-            # (q_learning_stochastic_path_new, (graph, p1index, goal_indices, 1000, 500, 1, 1),
-            #  "Stochastic-problem Q-learning (new) (converging, no discounting, no stochastic approximation)"),
+            # # Deterministic convergence checks
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.1, True),
+            #  "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.1"),
 
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.5, True),
+            #  "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.5"),
+
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.9, True),
+            #  "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.9"),
+            
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "random", False, False, 1, True),
+            #  "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1"),
+
+            # (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random", False, False, 1, True),
+            #  "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1, 500 -> 3000 steps"),
+
+            # (q_learning_path, (graph, p1index, goal_indices, 1, int(4e5), 1, 1, 0, True, False, "random", False, False, 1, True),
+            #  "One-episode random-exploration Q-learning true convergence (No discounting, no stochastic approximation) w/ term action only"),
+
+            # # Stochastic, prob model = 0.9
             # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 1, 1),
             #  "Stochastic-problem Q-learning (converging, no discounting, no stochastic approximation)"),
 
@@ -223,6 +226,33 @@ def main():
             # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 0.9, 0.9),
             # "Stochastic-problem Q-learning (converging, alpha = 0.9, gamma = 0.9)"),
 
+            # # Stochastic, Prob model = 0.99
+            # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0.1, False, 0.99),
+            #  "Stochastic-problem (0.99 success) Q-learning (converging, no discounting, no stochastic approximation)"),
+
+            # # N.B. At gamma 0.5 we sometimes get a very very slow result, so we do not test that
+            # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 1, 0.6, 0.1, False, 0.99),
+            # "Stochastic-problem (0.99 success) Q-learning (converging, no stochastic approximation, gamma = 0.6)"),
+
+            # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 1, 0.9, 0.1, False, 0.99),
+            # "Stochastic-problem (0.99 success) Q-learning (converging, no stochastic approximation, gamma = 0.9)"),
+
+            # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 0.2, 1, 0.1, False, 0.99),
+            # "Stochastic-problem (0.99 success) Q-learning (converging, no discounting, alpha = 0.2)"),
+
+            # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 0.7, 0.7, 0.1, False, 0.99),
+            # "Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.7, gamma = 0.7)"),
+
+            # (q_learning_stochastic_path, (graph, p1index, goal_indices, 1000, 500, 0.9, 0.9, 0.1, False, 0.99),
+            # "Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.9, gamma = 0.9)"),
+
+            # # Stochastic convergence checks (prob model 0.99)
+
+            # # Stochastic convergence checks (prob model 0.9)
+
+            #TODO: Run stochastic and deterministic convergence checks with statistics of EARLIEST convergence 
+
+            # # Value iteration
             # (valit_path, (graph, p1index, goal_indices),
             # "Value Iteration"),
 
@@ -253,6 +283,7 @@ def main():
             # (valit_path, (graph, p1index, goal_indices, 0.000001),
             # "Discounted Value Iteration - gamma = 0.000001"),
 
+            # # Prob valit
             # (prob_valit, (graph, p1index, goal_indices),
             # "Stochastic Value Iteration"),
 
@@ -303,7 +334,7 @@ def main():
             converge_actions_array= []
             
             for i in range (N):
-                has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action = find_path(graph, p1index,p2index, algorithm, args)
+                has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _ = find_path(graph, p1index,p2index, algorithm, args)
 
                 # record min/max
                 if shortest_path is None or path_length < shortest_path:
@@ -388,7 +419,7 @@ def main():
 
         with open(csv_filename, "w", newline="") as f:
             writer = csv.writer(f)
-            writer.writerow(["Algorithm", "Goal reached","Loops encountered", "Avg Time", "Var Time", "STD Time", "Avg Iterations" ,"Var Iterations", "STD iterations", "Avg action count" ,"Var action count", "STD action count", "Avg convergence time" ,"Var convergence time", "STD convergence time", "Shortest Path", "Longest Path"])
+            writer.writerow(["Algorithm", "Goal reached","Loops encountered", "Avg Time", "Var Time", "STD Time", "Avg Iterations" ,"Var Iterations", "STD iterations", "Avg action count" ,"Var action count", "STD action count", "Avg convergence action" ,"Var convergence actio ", "STD convergence action", "Shortest Path", "Longest Path"])
 
             for r in example_results:
                 writer.writerow([
@@ -410,6 +441,113 @@ def main():
                     r["shortest_path"],
                     r["longest_path"]
                 ])
+
+
+def run_learning_rate_x_prob_model_sim():
+    ex = 8 # simple problem 
+    graph, p1index, p2index, obstacles, goal_indices = init_problem(problines, ex, dims, radius)
+
+    learning_rates = [0.01, 0.02, 0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 0.99, 0.999]
+    prob_model_success = [0.5, 0.7, 0.9, 0.999, 0.999, 0.9999]
+
+    params_product = list(product(learning_rates, prob_model_success))
+
+    example_results = []
+
+    csv_filename = f"stochastic_learning_rate_results_{N}_samples.csv"
+
+    with open(csv_filename, "a", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Algorithm", "Goal reached", "Avg Time", "Var Time", "STD Time", "Avg Iterations" ,"Var Iterations", "STD iterations", "Avg action count" ,"Var action count", "STD action count", "Avg convergence action" ,"Var convergence actio ", "STD convergence action", "Shortest Path", "Longest Path"])
+        for alpha, prob_success in params_product:
+            avg_time = 0
+            longest_path = None
+            shortest_path = None
+            goal_reached_consistently = True
+            time_array = []
+            iterations_array = []
+            num_actions_array = []
+            converge_actions_array= []
+
+            algorithm = q_learning_stochastic_path
+            args = (graph, p1index, goal_indices, 1000, 500, alpha, 1, 0.9, True, prob_success)
+            info = f"Stochastic-problem ({prob_success} success) Q-learning (converging, alpha = {alpha}, gamma = 1,epsilon = 0.9)"
+
+            for i in range(N):
+                has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _ = find_path(graph, p1index,p2index, algorithm, args)
+
+                # record min/max
+                if shortest_path is None or path_length < shortest_path:
+                    shortest_path = path_length
+                if longest_path is None or path_length > longest_path:
+                    longest_path = path_length
+
+                if goal_in_path == False:
+                    goal_reached_consistently = False
+
+                time_array.append(elapsed_time)
+                iterations_array.append(num_iterations_or_episodes)
+                num_actions_array.append(num_actions_taken)
+                converge_actions_array.append(converged_at_action)
+
+            avg_time = np.average(time_array)
+            var_time = np.var(time_array)
+            std_time = np.std(time_array)
+
+            avg_iter = np.average(iterations_array)
+            var_iter = np.var(iterations_array)
+            std_iter = np.std(iterations_array)
+
+            avg_action_count = np.average(num_actions_array)
+            var_action_count = np.var(num_actions_array)
+            std_action_count = np.std(num_actions_array)
+
+            avg_convergence_action = np.average(converge_actions_array)
+            var_convergence_action = np.var(converge_actions_array)
+            std_convergence_action = np.std(converge_actions_array)
+
+            example_results.append({
+                "algorithm": info,
+                "goal_reached_consistently": goal_reached_consistently,
+                "avg_time": avg_time,
+                "var_time" : var_time,
+                "std_time" : std_time,
+                "avg_iter": avg_iter,
+                "var_iter" : var_iter,
+                "std_iter" : std_iter,
+                "avg_action_count": avg_action_count,
+                "var_action_count" : var_action_count,
+                "std_action_count" : std_action_count,
+                "avg_convergence_action": avg_convergence_action,
+                "var_convergence_action" : var_convergence_action,
+                "std_convergence_action" : std_convergence_action,
+                "shortest_path": shortest_path,
+                "longest_path": longest_path
+            })
+
+            # Write immediately
+            writer.writerow([
+                info,
+                goal_reached_consistently,
+                avg_time, var_time, std_time,
+                avg_iter, var_iter, std_iter,
+                avg_action_count, var_action_count, std_action_count,
+                avg_convergence_action, var_convergence_action, std_convergence_action,
+                shortest_path, longest_path
+            ])
+
+            # Force write to disk
+            f.flush()
+
+
+            print(f"Example {ex}: {info} | Goal reached consistently? -> {goal_reached_consistently} | | avg_time={avg_time:.4f}s | var_time={var_time:.4f}s | std_time={std_time:.4f}s | avg_act_count={avg_action_count} | shortest_path={shortest_path}")
+
+
+
+def main():
+    #run_simulations()
+
+    run_learning_rate_x_prob_model_sim()
 
 if __name__ == "__main__":
     main()

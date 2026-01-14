@@ -1,0 +1,7 @@
+Algorithm,Goal reached,Loops encountered,Avg Time,Var Time,STD Time,Avg Iterations,Var Iterations,STD iterations,Avg action count,Var action count,STD action count,Avg convergence time,Var convergence time,STD convergence time,Shortest Path,Longest Path
+"Stochastic-problem (0.99 success) Q-learning (converging, no discounting, no stochastic approximation)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, no stochastic approximation, gamma = 0.6)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, no stochastic approximation, gamma = 0.9)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, no discounting, alpha = 0.2)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.7, gamma = 0.7)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.9, gamma = 0.9)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0

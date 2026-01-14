@@ -73,7 +73,7 @@ def random_valit_path(graph, init, goal_region, epsilon_greedy = False, gamma = 
     #print("Stages: " + str(i))
     return i, num_actions, path, has_loop, 0.0, 0
 
-def prob_valit(graph, init, goal_region, gamma = 1):
+def prob_valit(graph, init, goal_region, gamma = 1, true_cost_out = None):
     # initialize values
     for n in graph.nodes:
         set_node_attributes(graph, {n:failure_cost}, 'value')
@@ -118,6 +118,9 @@ def prob_valit(graph, init, goal_region, gamma = 1):
                 set_node_attributes(graph, {m:best_n}, 'next')
         i += 1
     
+    if true_cost_out is not None:
+        true_cost_out["initial"] = graph.nodes[init]['value']
+        
     #print(get_node_attributes(graph, 'value'))
     path = []
     if graph.nodes[init]['value'] < failure_cost:
