@@ -332,6 +332,14 @@ def valit_path(graph, init, goal_region, gamma = 1):
                 set_node_attributes(graph, {m:best_cost}, 'value')
                 set_node_attributes(graph, {m:best_n}, 'next')
         i += 1
+
+    # values_by_node = {
+    #     m: graph.nodes[m].get('value')
+    #     for m in graph.nodes
+    #     if graph.nodes[m].get('value') != 1.0e30
+    # }
+    # print(values_by_node)
+
     path = []
     if graph.nodes[init]['value'] < failure_cost:
         path.append(init)

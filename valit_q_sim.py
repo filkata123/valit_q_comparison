@@ -449,6 +449,7 @@ def run_learning_rate_x_prob_model_sim():
 
     learning_rates = [0.01, 0.02, 0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 0.99, 0.999]
     prob_model_success = [0.5, 0.7, 0.9, 0.999, 0.999, 0.9999]
+    epsilon = 0.9
 
     params_product = list(product(learning_rates, prob_model_success))
 
@@ -470,8 +471,8 @@ def run_learning_rate_x_prob_model_sim():
             converge_actions_array= []
 
             algorithm = q_learning_stochastic_path
-            args = (graph, p1index, goal_indices, 1000, 500, alpha, 1, 0.9, True, prob_success)
-            info = f"Stochastic-problem ({prob_success} success) Q-learning (converging, alpha = {alpha}, gamma = 1,epsilon = 0.9)"
+            args = (graph, p1index, goal_indices, 5000, 500, alpha, 1, epsilon, True, prob_success)
+            info = f"Stochastic-problem ({prob_success} success) Q-learning (converging, alpha = {alpha}, gamma = 1, epsilon = {epsilon})"
 
             for i in range(N):
                 has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _ = find_path(graph, p1index,p2index, algorithm, args)

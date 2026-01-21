@@ -51,15 +51,30 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
 
     convergence_check_time = 0.0
     # Get true cost and exclude it from the time
-    true_cost_time = time.time()
-    true_cost_out = {}
-    prob_valit(graph, init, goal_region, gamma, true_cost_out)
-    true_cost = true_cost_out["initial"]
-    convergence_check_time += time.time() - true_cost_time
+    # true_cost_time = time.time()
+    # true_cost_out = {}
+    # prob_valit(graph, init, goal_region, gamma, true_cost_out)
+    # true_cost = true_cost_out["initial"]
+    # convergence_check_time += time.time() - true_cost_time
+
+    edge_calc_cost_time = time.time()
+    unique_weights = {
+        data.get("weight")
+        for _, _, data in graph.edges(data=True)
+        if "weight" in data and data.get("weight") != 0
+    }
+    avg_cost = sum(unique_weights) / len(unique_weights)
+    convergence_check_time += time.time() - edge_calc_cost_time
     converged_action = 0
+
+    max_distance_list = []
+    alpha_0 = alpha          # initial alpha
+    alpha_min = 1e-4         # lower bound
+    decay_rate = 0.001
 
     # Iteratively update Q-table values
     for episode in range(episodes):
+        alpha = max(alpha_min, alpha_0 / (1 + decay_rate * episode)) # inverse time decay
         state = init
         max_delta = 0
         
@@ -112,7 +127,12 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
                     # print(Q)
                     # print("news")
                     # print(q_values)
-                    if q_close(Q, q_values, 0.01 * true_cost): # use 0.1% of true cost (cost-to-go from initial state)
+                    max_distance = max(
+                        abs(Q[k] - q_values[k]) for k in Q.keys() & q_values.keys()
+                    )
+                    max_distance_list.append(max_distance)
+                    # print(0.1 * avg_cost * alpha_original)
+                    if q_close(Q, q_values, 0.1 * avg_cost): # use 10% of step cost NOTE: should we take into account the learning rate here? even when it is decayed?
                         converged_action = num_actions
                 convergence_check_time += time.time() - t
 
@@ -126,7 +146,7 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
         # if max_delta < convergence_threshold:
         #     #print(f"Q-learning converged at episode {episode}")
         #     break
-
+    print(max_distance_list)
     # Extract path from learned Q-values
     path = [init]
     current = init
@@ -343,7 +363,12 @@ def q_learning_path(graph, init, goal_region,
             if max_delta == convergence_threshold:
                 #print(f"Q-learning converged at episode {episode}")
                 break
-    
+    # V = {
+    #     s: min(Q[(s, a)] for a in graph.neighbors(s))
+    #     for s in graph.nodes
+    #     if list(graph.neighbors(s))
+    # }
+    # print(V)
     # Extract path from learned Q-values
     path = [init]
     current = init

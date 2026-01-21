@@ -126,7 +126,7 @@ def Draw():
     visits = {}
     viz_visits = False
     if use_qlearning:
-        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, q_learning_path, (G, p1index, goal_indices, 1000, 500, 1, 1))
+        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 1000, 500, 0.999, 1, 0.9, True, 0.9))
         if converged_at_action != 0:
             print("Converged at " + str(converged_at_action))
         else:
