@@ -12,6 +12,7 @@ from valit_q_testbed_helper import init_problem, find_path
 from q_learning_functions import *
 from valit_functions import *
 from dijkstra_functions import *
+from learning_rate_functions import *
 
 dims = 20 # number of samples per axis
 radius = 1 # neightborhood radius (1 = four-neighbors)
@@ -125,8 +126,11 @@ def Draw():
     G, p1index, p2index, obstacles, goal_indices = init_problem(problines, exnum, dims, radius)
     visits = {}
     viz_visits = False
+    reachable = nx.node_connected_component(G, p1index)
+    num_nodes = len(reachable)
     if use_qlearning:
-        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 1000, 500, 0.999, 1, 0.9, True, 0.9))
+        # has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 100000, 500, 1, 1, 1, False, 0.9, visit_count_decay, (0.75,), num_nodes))
+        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 1000, 500, 0.8, 1, 0.1, False, 0.7))
         if converged_at_action != 0:
             print("Converged at " + str(converged_at_action))
         else:
@@ -134,7 +138,7 @@ def Draw():
         print('Q-learning:   time elapsed:     ' + str(elapsed_time) + ' seconds')
         print("Number of episodes: " + str(num_iterations_or_episodes))
     else:
-        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, valit_path, (G, p1index, goal_indices))
+        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, prob_valit, (G, p1index, goal_indices))
         print('value iteration:   time elapsed:     ' + str(elapsed_time) + ' seconds')
         print("Number of iterations: " + str(num_iterations_or_episodes))
     if goal_in_path:

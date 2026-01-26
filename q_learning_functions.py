@@ -4,6 +4,7 @@ from prob_model import probability_model
 import time
 import math
 from valit_functions import prob_valit
+from learning_rate_functions import *
 
 def q_close(q1, q2, epsilon):
     if q1.keys() != q2.keys():
@@ -31,7 +32,7 @@ def god_eye_convergence_check(graph, Q, alpha, gamma, t_goal, goal_region):
     return newQ
 
 # Compute solution path from Q-table
-def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_steps=500, alpha=1, gamma=1, epsilon = 0.1, god_eye_convergence = False, prob_success = 0.9):
+def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_steps=500, alpha=1, gamma=1, epsilon = 0.1, god_eye_convergence = False, prob_success = 0.9, decay_func = None, args = None, num_states = None):
     # Add an edge from the goal state to itself with 0 weight (termination action)
     for goal in goal_region:
         graph.add_edge(goal, goal, weight=0.0)
@@ -50,31 +51,46 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
     num_actions = 0
 
     convergence_check_time = 0.0
-    # Get true cost and exclude it from the time
-    # true_cost_time = time.time()
-    # true_cost_out = {}
-    # prob_valit(graph, init, goal_region, gamma, true_cost_out)
-    # true_cost = true_cost_out["initial"]
-    # convergence_check_time += time.time() - true_cost_time
-
-    edge_calc_cost_time = time.time()
-    unique_weights = {
-        data.get("weight")
-        for _, _, data in graph.edges(data=True)
-        if "weight" in data and data.get("weight") != 0
-    }
-    avg_cost = sum(unique_weights) / len(unique_weights)
-    convergence_check_time += time.time() - edge_calc_cost_time
     converged_action = 0
 
-    max_distance_list = []
-    alpha_0 = alpha          # initial alpha
-    alpha_min = 1e-4         # lower bound
-    decay_rate = 0.001
+    if god_eye_convergence:
+        # Get true cost and exclude it from the time
+        # true_cost_time = time.time()
+        # true_cost_out = {}
+        # prob_valit(graph, init, goal_region, gamma, true_cost_out)
+        # true_cost = true_cost_out["initial"]
+        # convergence_check_time += time.time() - true_cost_time
+        optimal_values_time = time.time()
+        optimal_values_out = {}
+        prob_valit(graph, init, goal_region, gamma, values_out=optimal_values_out)
+        optimal_values = optimal_values_out["values"]
+        convergence_check_time += time.time() - optimal_values_time
 
+        edge_calc_cost_time = time.time()
+        unique_weights = {
+            data.get("weight")
+            for _, _, data in graph.edges(data=True)
+            if "weight" in data and data.get("weight") != 0
+        }
+        avg_cost = sum(unique_weights) / len(unique_weights)
+        convergence_check_time += time.time() - edge_calc_cost_time
+
+    max_distance_list = []
+    
     # Iteratively update Q-table values
     for episode in range(episodes):
-        alpha = max(alpha_min, alpha_0 / (1 + decay_rate * episode)) # inverse time decay
+        if decay_func is not None and args is not None:
+            if decay_func is inverse_time_decay:
+                alpha = decay_func(episode, *args)
+            elif decay_func is polynomial_decay:
+                alpha = decay_func(num_actions, *args)
+            elif decay_func is polynomial_decay_normalized:
+                if (num_states is not None):
+                    alpha = decay_func(num_actions, num_states, *args)
+                else:
+                    print("Number of states unknown.")
+            else:
+                alpha = alpha
         state = init
         max_delta = 0
         
@@ -109,9 +125,11 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
             next_neighbors = list(graph.neighbors(next_state))
             min_q_next = min([Q.get((next_state, a), 1.0E10) for a in next_neighbors]) if next_neighbors else 0
 
-            old_q = Q[(state, action)]
-            Q[(state, action)] = (1-alpha)*Q[(state, action)] + alpha * (cost + gamma * min_q_next)
             visits[(state, action)] += 1  # Track visit
+            old_q = Q[(state, action)]
+            if decay_func is visit_count_decay:
+                alpha = decay_func(visits[(state, action)], *args)
+            Q[(state, action)] = (1-alpha)*Q[(state, action)] + alpha * (cost + gamma * min_q_next)
 
             # Track maximum absolute change in Q-values per episodes
             delta = abs(Q[(state, action)] - old_q)
@@ -122,31 +140,42 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
 
             if god_eye_convergence:
                 t = time.time()
-                if (num_actions != 0 and num_actions % 1000 == 0):
+                if (num_actions != 0 and num_actions % 10000 == 0):
+                    # V = {
+                    #     s: min(Q[(s, a)] for a in graph.neighbors(s))
+                    #     for s in graph.nodes
+                    #     if list(graph.neighbors(s))
+                    # }
+                    # if q_close(V, optimal_values, 0.1): #TODO: need to check this for constant learning rates.
+                    #     converged_action = num_actions
                     q_values = god_eye_convergence_check(graph, Q, alpha, gamma, True, goal_region)
                     # print(Q)
                     # print("news")
                     # print(q_values)
-                    max_distance = max(
-                        abs(Q[k] - q_values[k]) for k in Q.keys() & q_values.keys()
-                    )
-                    max_distance_list.append(max_distance)
-                    # print(0.1 * avg_cost * alpha_original)
-                    if q_close(Q, q_values, 0.1 * avg_cost): # use 10% of step cost NOTE: should we take into account the learning rate here? even when it is decayed?
-                        converged_action = num_actions
+                    # max_distance = max(
+                    #     abs(Q[k] - q_values[k]) for k in Q.keys() & q_values.keys()
+                    # )
+                    # max_distance_list.append(max_distance)
+                    if q_close(Q, q_values, 0.1): #TODO: need to check this for constant learning rates.
+                       converged_action = num_actions
                 convergence_check_time += time.time() - t
 
             state = next_state
             if state in goal_region:
                 break
-        
         if god_eye_convergence and converged_action != 0:
             break
         # If the values in the Q-table haven't changed by a lot, some sort of soft convergence has been reached
         # if max_delta < convergence_threshold:
         #     #print(f"Q-learning converged at episode {episode}")
         #     break
-    print(max_distance_list)
+    #print(max_distance_list)
+    # V = {
+    #     s: min(Q[(s, a)] for a in graph.neighbors(s))
+    #     for s in graph.nodes
+    #     if list(graph.neighbors(s))
+    # }
+    # print(V)
     # Extract path from learned Q-values
     path = [init]
     current = init

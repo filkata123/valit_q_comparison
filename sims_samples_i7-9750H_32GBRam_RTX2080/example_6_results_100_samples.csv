@@ -52,12 +52,6 @@ cost-based no-discounting Q-learning,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 "One-episode random-exploration Q-learning(No discounting, no stochastic approximation) w/ term action only",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 "Fully-greedy Q-learning with convergence (No discounting, no stochastic approximation) w/ term action & term goal (best case)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 Don't care Q-learning,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
-"Stochastic-problem Q-learning (converging, no discounting, no stochastic approximation)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
-"Stochastic-problem Q-learning (converging, no stochastic approximation, gamma = 0.6)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
-"Stochastic-problem Q-learning (converging, no stochastic approximation, gamma = 0.6)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
-"Stochastic-problem Q-learning (converging, no discounting, alpha = 0.2)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
-"Stochastic-problem Q-learning (converging, alpha = 0.7, gamma = 0.7)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
-"Stochastic-problem Q-learning (converging, alpha = 0.9, gamma = 0.9)",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 Value Iteration,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 Discounted Value Iteration - gamma = 0.8,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 Discounted Value Iteration - gamma = 0.6,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0

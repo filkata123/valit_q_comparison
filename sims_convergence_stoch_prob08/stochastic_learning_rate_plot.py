@@ -7,7 +7,7 @@ import numpy as np
 # =========================
 # User parameters
 # =========================
-CSV_PATH = "5kep_stochastic_learning_rate_results_100_samples.csv"   # path to your CSV file
+CSV_PATH = "5kep_stochastic_learning_rate_results_100_samples.csv"
 
 # =========================
 # Helper functions

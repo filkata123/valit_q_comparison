@@ -73,7 +73,7 @@ def random_valit_path(graph, init, goal_region, epsilon_greedy = False, gamma = 
     #print("Stages: " + str(i))
     return i, num_actions, path, has_loop, 0.0, 0
 
-def prob_valit(graph, init, goal_region, gamma = 1, true_cost_out = None):
+def prob_valit(graph, init, goal_region, gamma = 1, true_cost_out = None, values_out = None, prob_success = 0.9):
     # initialize values
     for n in graph.nodes:
         set_node_attributes(graph, {n:failure_cost}, 'value')
@@ -92,7 +92,7 @@ def prob_valit(graph, init, goal_region, gamma = 1, true_cost_out = None):
             
             for n in graph.neighbors(m):
                 # Get edge count
-                prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(m))))
+                prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(m))), prob_success)
                 
                 cost = gamma * graph.nodes[n]['value'] * prob_success # multiply by success probability
                 cost = cost + gamma * graph.nodes[m]['value'] * prob_stay # multiply by stay probability
@@ -120,6 +120,15 @@ def prob_valit(graph, init, goal_region, gamma = 1, true_cost_out = None):
     
     if true_cost_out is not None:
         true_cost_out["initial"] = graph.nodes[init]['value']
+
+    if values_out is not None:
+        values_by_node = {
+            m: graph.nodes[m].get('value')
+            for m in graph.nodes
+            if graph.nodes[m].get('value') != 1.0e30
+        }
+        print(values_by_node)
+        values_out["values"] = values_by_node
         
     #print(get_node_attributes(graph, 'value'))
     path = []
@@ -133,7 +142,7 @@ def prob_valit(graph, init, goal_region, gamma = 1, true_cost_out = None):
         while not goal_reached:
             visited.add(current_node)
             desired = graph.nodes[current_node]['next'] # select our desired node
-            prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(current_node)))) # get probabilities
+            prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(current_node))), prob_success) # get probabilities
             choice = random.random()
             if choice <= prob_success:
                 nn = desired # successful transition
@@ -159,7 +168,7 @@ def prob_valit(graph, init, goal_region, gamma = 1, true_cost_out = None):
     #print("Stages: " + str(i))
     return i, num_actions, path, has_loop, 0.0, 0
 
-def q_prob_valit(graph, init, goal_region, gamma = 1):
+def q_prob_valit(graph, init, goal_region, gamma = 1, prob_success = 0.9):
     # initialize values
     for n in graph.nodes:
         set_node_attributes(graph, {n:failure_cost}, 'value')
@@ -179,7 +188,7 @@ def q_prob_valit(graph, init, goal_region, gamma = 1):
             Q = {}
             for n in graph.neighbors(m):
                 # Get edge count
-                prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(m))))
+                prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(m))), prob_success)
                 
                 cost = gamma * graph.nodes[n]['value'] * prob_success # multiply by success probability
                 cost = cost + gamma * graph.nodes[m]['value'] * prob_stay # multiply by stay probability
@@ -219,7 +228,7 @@ def q_prob_valit(graph, init, goal_region, gamma = 1):
         while not goal_reached:
             visited.add(current_node)
             desired = graph.nodes[current_node]['next'] # select our desired node
-            prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(current_node)))) # get probabilities
+            prob_success, prob_stay, prob_other = probability_model(len(list(graph.neighbors(current_node))), prob_success) # get probabilities
             choice = random.random()
             if choice <= prob_success:
                 nn = desired # successful transition

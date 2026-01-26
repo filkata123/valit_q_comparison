@@ -2,6 +2,7 @@ from valit_q_testbed_helper import init_problem, find_path
 from q_learning_functions import *
 from valit_functions import *
 from dijkstra_functions import *
+from learning_rate_functions import *
 import csv
 import numpy as np 
 from itertools import product
@@ -17,9 +18,8 @@ radius = 1 # neightborhood radius (1 = four-neighbors)
 # examples = [10,12]
 # exnum = examples[0] # example number
 
-N = 100
-
 def run_simulations():
+    N = 100
     for ex in range(0, int(num_of_ex)):
         graph, p1index, p2index, obstacles, goal_indices = init_problem(problines, ex, dims, radius)
 
@@ -444,6 +444,7 @@ def run_simulations():
 
 
 def run_learning_rate_x_prob_model_sim():
+    N = 100
     ex = 8 # simple problem 
     graph, p1index, p2index, obstacles, goal_indices = init_problem(problines, ex, dims, radius)
 
@@ -543,12 +544,141 @@ def run_learning_rate_x_prob_model_sim():
 
             print(f"Example {ex}: {info} | Goal reached consistently? -> {goal_reached_consistently} | | avg_time={avg_time:.4f}s | var_time={var_time:.4f}s | std_time={std_time:.4f}s | avg_act_count={avg_action_count} | shortest_path={shortest_path}")
 
+def run_decaying_learning_rate_x_prob_model_sim():
+    N = 10
+    ex = 2 # mid problem 
+    graph, p1index, p2index, obstacles, goal_indices = init_problem(problines, ex, dims, radius)
+    reachable = nx.node_connected_component(graph, p1index)
+    num_nodes = len(reachable)
+
+    prob_model_success = [0.9, 0.7, 0.5]
+    decay_rate_inverse = [inverse_time_decay]
+    decay_rate_functions = [polynomial_decay, polynomial_decay_normalized, visit_count_decay]
+    alpha_zeros = [1, 0.1]
+    omegas = [1/8, 1/4, 3/8, 1/2, 3/4, 7/8, 1, 2]
+    decay_rates = [1, 0.1, 0.01, 0.001]
+    epsilon = 1
+
+    sims = []
+    for decay_rate_func, alpha_zero, omega, decay_rate in product(decay_rate_inverse, alpha_zeros, omegas, decay_rates):
+        sims.append((decay_rate_func, alpha_zero, omega, decay_rate))
+
+    for decay_rate_func, omega in product(decay_rate_functions, omegas):
+        sims.append((decay_rate_func, omega))
+
+    example_results = []
+
+    csv_filename = f"stochastic_learning_rate_decay_results_{N}_samples.csv"
+
+    with open(csv_filename, "a", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Algorithm", "Goal reached", "Avg Time", "Var Time", "STD Time", "Avg Iterations" ,"Var Iterations", "STD iterations", "Avg action count" ,"Var action count", "STD action count", "Avg convergence action" ,"Var convergence actio ", "STD convergence action", "Shortest Path", "Longest Path"])
+        for prob_success in prob_model_success:
+             for sim in sims:
+                decay_rate_func = sim[0]
+                # TEMPORARY
+                if decay_rate_func not in [inverse_time_decay, polynomial_decay]:
+                    continue
+
+                alpha_zero, omega, decay_rate = 0,0,0
+                avg_time = 0
+                longest_path = None
+                shortest_path = None
+                goal_reached_consistently = True
+                time_array = []
+                iterations_array = []
+                num_actions_array = []
+                converge_actions_array= []
+
+                algorithm = q_learning_stochastic_path
+                if decay_rate_func is inverse_time_decay:
+                    _, alpha_zero, omega, decay_rate = sim
+                    if decay_rate != 0.01 or omega < 3/4:
+                        continue
+                    args = (graph, p1index, goal_indices, 20000, 500, 1, 1, epsilon, True, prob_success, decay_rate_func, (alpha_zero, decay_rate, omega), num_nodes)
+                    info = f"Stochastic-problem ({prob_success} success) Q-learning (converging, alpha_zero = {alpha_zero}, gamma = 1, epsilon = {epsilon}, omega = {omega}, decay_rate = {decay_rate}, decay_function = {decay_rate_func.__name__})"
+                else:
+                    _, omega = sim
+                    if omega > 1/2:
+                        continue
+                    args = (graph, p1index, goal_indices, 20000, 500, 1, 1, epsilon, True, prob_success, decay_rate_func, (omega,), num_nodes)
+                    info = f"Stochastic-problem ({prob_success} success) Q-learning (converging, alpha = 1, gamma = 1, epsilon = {epsilon}, omega = {omega}, decay_function = {decay_rate_func.__name__})"
+                
+                for i in range(N):
+                    has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _ = find_path(graph, p1index,p2index, algorithm, args)
+
+                    # record min/max
+                    if shortest_path is None or path_length < shortest_path:
+                        shortest_path = path_length
+                    if longest_path is None or path_length > longest_path:
+                        longest_path = path_length
+
+                    if goal_in_path == False:
+                        goal_reached_consistently = False
+
+                    time_array.append(elapsed_time)
+                    iterations_array.append(num_iterations_or_episodes)
+                    num_actions_array.append(num_actions_taken)
+                    converge_actions_array.append(converged_at_action)
+
+                avg_time = np.average(time_array)
+                var_time = np.var(time_array)
+                std_time = np.std(time_array)
+
+                avg_iter = np.average(iterations_array)
+                var_iter = np.var(iterations_array)
+                std_iter = np.std(iterations_array)
+
+                avg_action_count = np.average(num_actions_array)
+                var_action_count = np.var(num_actions_array)
+                std_action_count = np.std(num_actions_array)
+
+                avg_convergence_action = np.average(converge_actions_array)
+                var_convergence_action = np.var(converge_actions_array)
+                std_convergence_action = np.std(converge_actions_array)
+
+                example_results.append({
+                    "algorithm": info,
+                    "goal_reached_consistently": goal_reached_consistently,
+                    "avg_time": avg_time,
+                    "var_time" : var_time,
+                    "std_time" : std_time,
+                    "avg_iter": avg_iter,
+                    "var_iter" : var_iter,
+                    "std_iter" : std_iter,
+                    "avg_action_count": avg_action_count,
+                    "var_action_count" : var_action_count,
+                    "std_action_count" : std_action_count,
+                    "avg_convergence_action": avg_convergence_action,
+                    "var_convergence_action" : var_convergence_action,
+                    "std_convergence_action" : std_convergence_action,
+                    "shortest_path": shortest_path,
+                    "longest_path": longest_path
+                })
+
+                # Write immediately
+                writer.writerow([
+                    info,
+                    goal_reached_consistently,
+                    avg_time, var_time, std_time,
+                    avg_iter, var_iter, std_iter,
+                    avg_action_count, var_action_count, std_action_count,
+                    avg_convergence_action, var_convergence_action, std_convergence_action,
+                    shortest_path, longest_path
+                ])
+
+                # Force write to disk
+                f.flush()
+
+
+                print(f"Example {ex}: {info} | Goal reached consistently? -> {goal_reached_consistently} | | avg_time={avg_time:.4f}s | var_time={var_time:.4f}s | std_time={std_time:.4f}s | avg_act_count={avg_action_count} | shortest_path={shortest_path}")
 
 
 def main():
     #run_simulations()
 
-    run_learning_rate_x_prob_model_sim()
+    #run_learning_rate_x_prob_model_sim()
+    run_decaying_learning_rate_x_prob_model_sim()
 
 if __name__ == "__main__":
     main()

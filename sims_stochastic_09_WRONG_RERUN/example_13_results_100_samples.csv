@@ -1,0 +1,7 @@
+Algorithm,Goal reached,Loops encountered,Avg Time,Var Time,STD Time,Avg Iterations,Var Iterations,STD iterations,Avg action count,Var action count,STD action count,Shortest Path,Longest Path
+"Stochastic-problem Q-learning (converging, no discounting, no stochastic approximation)",False,True,0.4037388825416565,0.0017431820673549456,0.04175143191981499,999.0,0.0,0.0,89561.9,3897199.5499999993,1974.1326069947781,38,100002
+"Stochastic-problem Q-learning (converging, no stochastic approximation, gamma = 0.6)",True,True,0.4006805396080017,0.0007408027051184206,0.027217691032091988,999.0,0.0,0.0,92818.16,3408184.5543999993,1846.1269063636983,37,1924
+"Stochastic-problem Q-learning (converging, no stochastic approximation, gamma = 0.6)",True,True,0.39159995555877686,0.000776764053257034,0.027870487137060126,999.0,0.0,0.0,92256.24,3323580.6224,1823.0690119685542,39,33330
+"Stochastic-problem Q-learning (converging, no discounting, alpha = 0.2)",True,True,0.5543508291244507,0.0011472787754695448,0.03387150388556057,999.0,0.0,0.0,129751.86,375990.72039999993,613.1808219440657,33,73
+"Stochastic-problem Q-learning (converging, alpha = 0.7, gamma = 0.7)",True,True,0.32796918153762816,0.00040104904683786914,0.02002620899815712,999.0,0.0,0.0,75502.25,715461.1275,845.8493527218661,33,237
+"Stochastic-problem Q-learning (converging, alpha = 0.9, gamma = 0.9)",True,True,0.3381300282478332,0.0005151180945593466,0.022696213220697117,999.0,0.0,0.0,79994.61,1391996.3179000006,1179.8289358631616,35,4826
