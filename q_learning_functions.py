@@ -322,6 +322,7 @@ def q_learning_path(graph, init, goal_region,
     convergence_check_time = 0.0
     converged_action = 0
 
+    episode_trajectories = None
     # Iteratively update Q-table values
     for episode in range(episodes):
         state = init
@@ -362,6 +363,9 @@ def q_learning_path(graph, init, goal_region,
                 max_delta = delta
             
             num_actions += 1
+
+            if episode_trajectories is not None:
+                episode_trajectories.append(next_state)
 
             # Check when the algorithm actually convergens and report for statistics (does not affect algorithm)
             if god_eye_convergence:
@@ -417,7 +421,7 @@ def q_learning_path(graph, init, goal_region,
     if t_action:
         for goal in goal_region:
             graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return episode, num_actions, path, has_loop, convergence_check_time, converged_action, visits
+    return episode, num_actions, path, has_loop, convergence_check_time, converged_action, visits, episode_trajectories
 
 # Chooser that uses digits of Pi to make choices. Works for any base up to 10.
 class PiChooser:

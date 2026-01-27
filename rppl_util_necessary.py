@@ -90,3 +90,20 @@ def build_grid_graph(dims, radius, obstacles, xmax=800, ymax=800):
                     if safe(G.nodes[a]['point'], G.nodes[b]['point'], obstacles) and not G.has_edge(a, b):
                         G.add_edge(a, b, weight=dist2(G.nodes[a]['point'], G.nodes[b]['point']))
     return G
+
+def apply_vertex_costs(G, vertex_costs = {}, default_weight=1):
+    """
+    G: networkx.Graph
+    vertex_costs: dict {node_index: extra_cost}
+                  extra_cost is added to edges touching this node
+    default_weight: base weight for all edges
+    """
+
+    # Step 1: set all edges to default weight
+    for u, v in G.edges():
+        G[u][v]['weight'] = default_weight
+
+    # Step 2: update edges connected to selected vertices
+    for vtx, extra in vertex_costs.items():
+        for nbr in G.neighbors(vtx):
+            G[vtx][nbr]['weight'] = extra

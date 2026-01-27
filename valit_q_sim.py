@@ -334,7 +334,7 @@ def run_simulations():
             converge_actions_array= []
             
             for i in range (N):
-                has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _ = find_path(graph, p1index,p2index, algorithm, args)
+                has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _,_ = find_path(graph, p1index,p2index, algorithm, args)
 
                 # record min/max
                 if shortest_path is None or path_length < shortest_path:
@@ -476,7 +476,7 @@ def run_learning_rate_x_prob_model_sim():
             info = f"Stochastic-problem ({prob_success} success) Q-learning (converging, alpha = {alpha}, gamma = 1, epsilon = {epsilon})"
 
             for i in range(N):
-                has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _ = find_path(graph, p1index,p2index, algorithm, args)
+                has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _,_ = find_path(graph, p1index,p2index, algorithm, args)
 
                 # record min/max
                 if shortest_path is None or path_length < shortest_path:
@@ -605,7 +605,7 @@ def run_decaying_learning_rate_x_prob_model_sim():
                     info = f"Stochastic-problem ({prob_success} success) Q-learning (converging, alpha = 1, gamma = 1, epsilon = {epsilon}, omega = {omega}, decay_function = {decay_rate_func.__name__})"
                 
                 for i in range(N):
-                    has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _ = find_path(graph, p1index,p2index, algorithm, args)
+                    has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _, _ = find_path(graph, p1index,p2index, algorithm, args)
 
                     # record min/max
                     if shortest_path is None or path_length < shortest_path:

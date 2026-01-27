@@ -13,6 +13,8 @@ from q_learning_functions import *
 from valit_functions import *
 from dijkstra_functions import *
 from learning_rate_functions import *
+import numpy as np
+import cv2
 
 dims = 20 # number of samples per axis
 radius = 1 # neightborhood radius (1 = four-neighbors)
@@ -28,8 +30,24 @@ blue = 50, 50, 255
 green = 0, 255, 0
 
 def draw_graph_edges(g,screen):
-    for i,j in g.edges:
-        pygame.draw.line(screen,white,g.nodes[i]['point'],g.nodes[j]['point'],2)
+    for u, v, data in g.edges(data=True):
+        w = data.get('weight', 1)
+
+        if w == 1:
+            color = white
+            width = 2
+        else:
+            color = red      # expensive edges
+            width = 3
+
+        pygame.draw.line(
+            screen,
+            color,
+            g.nodes[u]['point'],
+            g.nodes[v]['point'],
+            width)
+    # for i,j in g.edges:
+    #     pygame.draw.line(screen,white,g.nodes[i]['point'],g.nodes[j]['point'],2)
 
 def draw_discs(dlist,screen):
     for d in dlist:
@@ -120,6 +138,103 @@ def draw_visits_heatmap(graph, obstacles, visits, p1index, goal_indices, title="
     
     pygame.display.update()
 
+def visualize_trajectories(graph, obstacles, p1index, goal_indices, state_vector, init, fps=30, video_file=None):
+    """Visualize learned trajectories from a flat state vector, animating each step.
+    
+    Args:
+        state_vector: 1D list of states encountered during all episodes
+        init: initial state index to detect episode boundaries
+        fps: frames per second for animation
+        video_file: if provided, save to video file (headless mode, no display)
+    """
+    
+    xmax, ymax = 800, 800
+    
+    # Setup video writer if recording
+    video_writer = None
+    if video_file:
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        video_writer = cv2.VideoWriter(video_file, fourcc, fps, (xmax, ymax))
+    else:
+        pygame.init()
+        screen = pygame.display.set_mode([xmax, ymax])
+        pygame.display.set_caption('Q-Learning Trajectories')
+        clock = pygame.time.Clock()
+    
+    # Create surface for drawing (works in headless mode)
+    surface = pygame.Surface((xmax, ymax))
+    
+    # Reconstruct episodes from flat vector
+    trajectories = []
+    current_trajectory = [init]
+    
+    for state in state_vector:
+        current_trajectory.append(state)
+        
+        # Episode ends when we reach a goal state
+        if state in goal_indices:
+            trajectories.append(current_trajectory)
+            current_trajectory = [init]
+    
+    # Add final trajectory if it doesn't end at goal
+    if len(current_trajectory) > 1:
+        trajectories.append(current_trajectory)
+    
+    # Visualize each trajectory step-by-step
+    for ep_idx, trajectory in enumerate(trajectories):
+        # Animate through each step in the trajectory
+        for step in range(len(trajectory)):
+            surface.fill(black)
+            draw_discs(obstacles, surface)
+            draw_graph_edges(graph, surface)
+            
+            # Draw path taken so far in yellow
+            for i in range(step):
+                try:
+                    pygame.draw.line(surface, (255, 255, 0), 
+                                   graph.nodes[trajectory[i]]['point'],
+                                   graph.nodes[trajectory[i+1]]['point'], 3)
+                except:
+                    pass
+            
+            # Draw current position as blue circle
+            try:
+                pygame.draw.circle(surface, blue, graph.nodes[trajectory[step]]['point'], 8)
+            except:
+                pass
+            
+            # Draw start and goal
+            pygame.draw.circle(surface, green, graph.nodes[p1index]['point'], 10)
+            for g in goal_indices:
+                pygame.draw.circle(surface, red, graph.nodes[g]['point'], 10)
+            
+            caption = f'Episode {ep_idx} / {len(trajectories)} - Step {step} / {len(trajectory)-1} (Path length: {len(trajectory)})'
+            
+            if video_writer:
+                # Convert pygame surface to numpy array for video
+                frame = pygame.surfarray.array3d(surface)
+                frame = np.transpose(frame, (1, 0, 2))  # Rotate to correct orientation
+                frame = cv2.cvtColor(frame.astype(np.uint8), cv2.COLOR_RGB2BGR)  # RGB to BGR
+                video_writer.write(frame)
+                #print(f"Recording: {caption}")
+            else:
+                screen.blit(surface, (0, 0))
+                pygame.display.set_caption(caption)
+                pygame.display.update()
+                clock.tick(fps)
+                
+                for event in pygame.event.get():
+                    if event.type == QUIT:
+                        pygame.quit()
+                        return
+    
+    # Cleanup
+    if video_writer:
+        video_writer.release()
+        print(f"Video saved to {video_file}")
+    else:
+        pygame.quit()
+
 # This corresponds to GUI button 'Draw' that runs the example.
 def Draw():
     global G
@@ -129,16 +244,18 @@ def Draw():
     reachable = nx.node_connected_component(G, p1index)
     num_nodes = len(reachable)
     if use_qlearning:
-        # has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 100000, 500, 1, 1, 1, False, 0.9, visit_count_decay, (0.75,), num_nodes))
-        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 1000, 500, 0.8, 1, 0.1, False, 0.7))
+        # has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 1000, 500, 1, 1, 1, False, 0.5, visit_count_decay, (0.75,), num_nodes))
+        # has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 1000, 500, 0.9, 1, 1, False, 0.5))
+        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits, episode_trajectories = find_path(G, p1index,p2index, q_learning_path, (G, p1index, goal_indices, 1000, 500, 1,1,0, False, True, "greedy"))
         if converged_at_action != 0:
             print("Converged at " + str(converged_at_action))
         else:
             print("No convergence.")
         print('Q-learning:   time elapsed:     ' + str(elapsed_time) + ' seconds')
         print("Number of episodes: " + str(num_iterations_or_episodes))
+        #visualize_trajectories(G, obstacles, p1index, goal_indices, episode_trajectories, init=p1index, fps=120, video_file="q_learning_trajectory.mp4")
     else:
-        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, prob_valit, (G, p1index, goal_indices))
+        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits, episode_trajectories = find_path(G, p1index,p2index, valit_path, (G, p1index, goal_indices))
         print('value iteration:   time elapsed:     ' + str(elapsed_time) + ' seconds')
         print("Number of iterations: " + str(num_iterations_or_episodes))
     if goal_in_path:

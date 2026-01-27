@@ -14,6 +14,7 @@ def model_free_dijkstra(graph, init, goal_region):
     visited_nodes.add(current)
     rebuilt_graph
     
+    # DFS, where we ensure that each edge has been explored.
     while True:
         found_unexplored_edge = False
 
