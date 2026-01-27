@@ -1,0 +1,8 @@
+Algorithm,Goal reached,Loops encountered,Avg Time,Var Time,STD Time,Avg Iterations,Var Iterations,STD iterations,Avg action count,Var action count,STD action count,Avg convergence action,Var convergence actio ,STD convergence action,Convergence rate,Shortest Path,Longest Path
+"cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.1",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.5",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.9",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+"Fully-random (deterministic with pi) exploration Q-learning (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1",False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Model-free Dijkstra,False,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0

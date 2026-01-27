@@ -6,6 +6,7 @@ from learning_rate_functions import *
 import csv
 import numpy as np 
 from itertools import product
+import networkx as nx
 
 # get example list
 problem = open('problem_circles.txt')
@@ -188,17 +189,26 @@ def run_simulations():
             #  "Don't care Q-learning"),
 
             # # Deterministic convergence checks
-            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.1, True),
-            #  "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.1"),
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "greedy", False, False, 0, True),
+             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0"),
 
-            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.5, True),
-            #  "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.5"),
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.25, True),
+             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.25"),
 
-            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.9, True),
-            #  "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.9"),
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.5, True),
+             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.5"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.75, True),
+             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.75"),
+
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "epsilon-greedy", False, False, 0.9, True),
+             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 0.9"),
             
-            # (q_learning_path, (graph, p1index, goal_indices, 1000, 500, 1, 1, 0, True, True, "random", False, False, 1, True),
-            #  "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1"),
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random", False, False, 1, True),
+             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1"),
+
+            (q_learning_path, (graph,p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random", False, True, 1, True),
+             "Fully-random (deterministic with pi) exploration Q-learning (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1"),
 
             # (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random", False, False, 1, True),
             #  "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1, 500 -> 3000 steps"),
@@ -316,8 +326,14 @@ def run_simulations():
             # (q_prob_valit, (graph, p1index, goal_indices),
             # "Q-factor Stochastic Value Iteration"),
 
-            # (model_free_dijkstra, (graph, p1index, goal_indices),
-            # "Model-free Dijkstra"),
+            (model_free_dijkstra, (graph, p1index, goal_indices),
+            "Model-free Dijkstra"),
+
+            (model_free_valit, (graph, p1index, goal_indices),
+            "Model-free Value Iteration"),
+
+            (model_free_valit, (graph, p1index, goal_indices, True),
+            "Model-free Synchronous Value Iteration"),
         ]
 
         example_results = []
@@ -351,7 +367,8 @@ def run_simulations():
                 time_array.append(elapsed_time)
                 iterations_array.append(num_iterations_or_episodes)
                 num_actions_array.append(num_actions_taken)
-                converge_actions_array.append(converged_at_action)
+                if converged_at_action != 0: # track those that converge
+                    converge_actions_array.append(converged_at_action)
 
             if len(time_array) != 0:    
                 avg_time = np.average(time_array)
@@ -366,9 +383,16 @@ def run_simulations():
                 var_action_count = np.var(num_actions_array)
                 std_action_count = np.std(num_actions_array)
 
-                avg_convergence_action = np.average(converge_actions_array)
-                var_convergence_action = np.var(converge_actions_array)
-                std_convergence_action = np.std(converge_actions_array)
+                if converge_actions_array:
+                    convergence_rate = len(converge_actions_array) / N
+                    avg_convergence_action = np.average(converge_actions_array)
+                    var_convergence_action = np.var(converge_actions_array)
+                    std_convergence_action = np.std(converge_actions_array)
+                else:
+                    convergence_rate = 0.0
+                    avg_convergence_action = 0.0
+                    var_convergence_action =  0.0
+                    std_convergence_action =  0.0
 
                 example_results.append({
                     "algorithm": info,
@@ -386,6 +410,7 @@ def run_simulations():
                     "avg_convergence_action": avg_convergence_action,
                     "var_convergence_action" : var_convergence_action,
                     "std_convergence_action" : std_convergence_action,
+                    "convergence_rate" : convergence_rate,
                     "shortest_path": shortest_path,
                     "longest_path": longest_path
                 })
@@ -407,6 +432,7 @@ def run_simulations():
                     "avg_convergence_action": 0,
                     "var_convergence_action" : 0,
                     "std_convergence_action" : 0,
+                    "convergence_rate" : 0,
                     "shortest_path": 0,
                     "longest_path": 0
                 })
@@ -419,7 +445,7 @@ def run_simulations():
 
         with open(csv_filename, "w", newline="") as f:
             writer = csv.writer(f)
-            writer.writerow(["Algorithm", "Goal reached","Loops encountered", "Avg Time", "Var Time", "STD Time", "Avg Iterations" ,"Var Iterations", "STD iterations", "Avg action count" ,"Var action count", "STD action count", "Avg convergence action" ,"Var convergence actio ", "STD convergence action", "Shortest Path", "Longest Path"])
+            writer.writerow(["Algorithm", "Goal reached","Loops encountered", "Avg Time", "Var Time", "STD Time", "Avg Iterations" ,"Var Iterations", "STD iterations", "Avg action count" ,"Var action count", "STD action count", "Avg convergence action" ,"Var convergence actio ", "STD convergence action", "Convergence rate", "Shortest Path", "Longest Path"])
 
             for r in example_results:
                 writer.writerow([
@@ -438,6 +464,7 @@ def run_simulations():
                     r["avg_convergence_action"],
                     r["var_convergence_action"],
                     r["std_convergence_action"],
+                    r["convergence_rate"],
                     r["shortest_path"],
                     r["longest_path"]
                 ])
@@ -675,10 +702,10 @@ def run_decaying_learning_rate_x_prob_model_sim():
 
 
 def main():
-    #run_simulations()
+    run_simulations()
 
     #run_learning_rate_x_prob_model_sim()
-    run_decaying_learning_rate_x_prob_model_sim()
+    #run_decaying_learning_rate_x_prob_model_sim()
 
 if __name__ == "__main__":
     main()

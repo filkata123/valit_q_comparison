@@ -3,7 +3,7 @@ from collections import defaultdict
 from prob_model import probability_model
 import time
 import math
-from valit_functions import prob_valit
+from valit_functions import prob_valit, valit_path
 from learning_rate_functions import *
 
 def q_close(q1, q2, epsilon):
@@ -322,6 +322,14 @@ def q_learning_path(graph, init, goal_region,
     convergence_check_time = 0.0
     converged_action = 0
 
+    if god_eye_convergence:
+        # Get true cost and exclude it from the time
+        optimal_values_time = time.time()
+        optimal_values_out = {}
+        valit_path(graph, init, goal_region, gamma, values_out=optimal_values_out)
+        optimal_values = optimal_values_out["values"]
+        convergence_check_time += time.time() - optimal_values_time
+
     episode_trajectories = None
     # Iteratively update Q-table values
     for episode in range(episodes):
@@ -371,9 +379,16 @@ def q_learning_path(graph, init, goal_region,
             if god_eye_convergence:
                 t = time.time()
                 if (num_actions != 0 and num_actions % 5000 == 0):
-                    q_values = god_eye_convergence_check(graph, Q, alpha, gamma, t_goal, goal_region)
-                    if Q == q_values:
-                        converged_action = num_actions
+                    #q_values = god_eye_convergence_check(graph, Q, alpha, gamma, t_goal, goal_region)
+                    # if Q == q_values:
+                    #     converged_action = num_actions
+                    V = {
+                        s: min(Q[(s, a)] for a in graph.neighbors(s))
+                        for s in graph.nodes
+                        if list(graph.neighbors(s))
+                    }
+                    if V == optimal_values:
+                       converged_action = num_actions
                 convergence_check_time += time.time() - t
             
             state = next_state
@@ -534,4 +549,4 @@ def q_learning_path_reward(graph, init, goal_region, episodes=1000, max_steps=50
         current = next_node
     # for goal in goal_region:
     #     graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return episode, num_actions, path, has_loop, 0.0, 0, visits
+    return episode, num_actions, path, has_loop, 0.0, num_actions, visits

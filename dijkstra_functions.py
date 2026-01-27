@@ -1,47 +1,13 @@
 import heapq
 from itertools import count
+from system_identificator import system_identification
 import networkx as nx
 
 def model_free_dijkstra(graph, init, goal_region):
-    # system identification I guess
-    rebuilt_graph = nx.Graph()
-    
-    visited_nodes = set()
-    explored_edges = set()
-    stack = []
-
-    current = init
-    visited_nodes.add(current)
-    rebuilt_graph
-    
-    # DFS, where we ensure that each edge has been explored.
-    while True:
-        found_unexplored_edge = False
-
-        for neighbor in graph.neighbors(current):
-            edge = frozenset({current, neighbor}) # frozenset = unordered set
-            
-            if edge not in explored_edges:
-                found_unexplored_edge = True
-
-                explored_edges.add(edge)
-                attr = graph[current][neighbor]
-                rebuilt_graph.add_edge(current, neighbor, **attr)
-
-                stack.append(current)
-                current = neighbor
-
-                if current not in visited_nodes:
-                    visited_nodes.add(current)
-                    rebuilt_graph.add_node(current)
-                break # we don't need to go try other edges
-        
-        if not found_unexplored_edge:
-            # Nothing left to explore
-            if not stack:
-                break
-            current = stack.pop()
-    return dijkstra_path(rebuilt_graph, init, goal_region)
+    rebuilt_graph, num_actions = system_identification(graph, init)
+    results = list(dijkstra_path(rebuilt_graph, init, goal_region))
+    results[1] += num_actions
+    return results
 
 # Slightly modified version of nx.dijkstra_path
 def dijkstra_path(graph, init, goal_region):
@@ -89,4 +55,4 @@ def dijkstra_path(graph, init, goal_region):
     path = paths[found_goal]
     has_loop = False
 
-    return i, num_actions, path, has_loop, 0.0, 0
+    return i, num_actions, path, has_loop, 0.0, num_actions

@@ -15,6 +15,7 @@ from dijkstra_functions import *
 from learning_rate_functions import *
 import numpy as np
 import cv2
+import networkx as nx
 
 dims = 20 # number of samples per axis
 radius = 1 # neightborhood radius (1 = four-neighbors)
@@ -30,24 +31,24 @@ blue = 50, 50, 255
 green = 0, 255, 0
 
 def draw_graph_edges(g,screen):
-    for u, v, data in g.edges(data=True):
-        w = data.get('weight', 1)
+    # for u, v, data in g.edges(data=True):
+    #     w = data.get('weight', 1)
 
-        if w == 1:
-            color = white
-            width = 2
-        else:
-            color = red      # expensive edges
-            width = 3
+    #     if w == 1:
+    #         color = white
+    #         width = 2
+    #     else:
+    #         color = red      # expensive edges
+    #         width = 3
 
-        pygame.draw.line(
-            screen,
-            color,
-            g.nodes[u]['point'],
-            g.nodes[v]['point'],
-            width)
-    # for i,j in g.edges:
-    #     pygame.draw.line(screen,white,g.nodes[i]['point'],g.nodes[j]['point'],2)
+    #     pygame.draw.line(
+    #         screen,
+    #         color,
+    #         g.nodes[u]['point'],
+    #         g.nodes[v]['point'],
+    #         width)
+    for i,j in g.edges:
+        pygame.draw.line(screen,white,g.nodes[i]['point'],g.nodes[j]['point'],2)
 
 def draw_discs(dlist,screen):
     for d in dlist:
@@ -239,6 +240,7 @@ def visualize_trajectories(graph, obstacles, p1index, goal_indices, state_vector
 def Draw():
     global G
     G, p1index, p2index, obstacles, goal_indices = init_problem(problines, exnum, dims, radius)
+    #print(len(nx.descendants(G, p1index)))
     visits = {}
     viz_visits = False
     reachable = nx.node_connected_component(G, p1index)
@@ -246,7 +248,7 @@ def Draw():
     if use_qlearning:
         # has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 1000, 500, 1, 1, 1, False, 0.5, visit_count_decay, (0.75,), num_nodes))
         # has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 1000, 500, 0.9, 1, 1, False, 0.5))
-        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits, episode_trajectories = find_path(G, p1index,p2index, q_learning_path, (G, p1index, goal_indices, 1000, 500, 1,1,0, False, True, "greedy"))
+        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits, episode_trajectories = find_path(G, p1index,p2index, q_learning_path, (G, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random", False, False, 1, True))
         if converged_at_action != 0:
             print("Converged at " + str(converged_at_action))
         else:
@@ -255,7 +257,7 @@ def Draw():
         print("Number of episodes: " + str(num_iterations_or_episodes))
         #visualize_trajectories(G, obstacles, p1index, goal_indices, episode_trajectories, init=p1index, fps=120, video_file="q_learning_trajectory.mp4")
     else:
-        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits, episode_trajectories = find_path(G, p1index,p2index, valit_path, (G, p1index, goal_indices))
+        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits, episode_trajectories = find_path(G, p1index,p2index, model_free_dijkstra, (G, p1index, goal_indices))
         print('value iteration:   time elapsed:     ' + str(elapsed_time) + ' seconds')
         print("Number of iterations: " + str(num_iterations_or_episodes))
     if goal_in_path:

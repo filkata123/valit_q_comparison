@@ -1,10 +1,22 @@
 from networkx.classes.function import get_node_attributes, set_node_attributes
 import random
 from prob_model import probability_model
+from system_identificator import system_identification
 
 # value iteration constants
 failure_cost = 1.0E30
 max_valits = 1000
+
+def model_free_valit(graph, init, goal_region, sync = False):
+    #new_graph = graph.subgraph(nx.node_connected_component(graph, init)).copy()
+    rebuilt_graph, num_actions = system_identification(graph, init)
+    if not sync:
+        results = list(valit_path(rebuilt_graph, init, goal_region))
+    else:
+        results = list(valit_path_sync(rebuilt_graph, init, goal_region))
+    results[1] += num_actions
+    return results
+
 
 def random_valit_path(graph, init, goal_region, epsilon_greedy = False, gamma = 1):
     # initialize values
@@ -71,7 +83,7 @@ def random_valit_path(graph, init, goal_region, epsilon_greedy = False, gamma = 
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return i, num_actions, path, has_loop, 0.0, 0
+    return i, num_actions, path, has_loop, 0.0, num_actions
 
 def prob_valit(graph, init, goal_region, gamma = 1, true_cost_out = None, values_out = None, prob_success = 0.9):
     # initialize values
@@ -166,7 +178,7 @@ def prob_valit(graph, init, goal_region, gamma = 1, true_cost_out = None, values
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return i, num_actions, path, has_loop, 0.0, 0
+    return i, num_actions, path, has_loop, 0.0, num_actions
 
 def q_prob_valit(graph, init, goal_region, gamma = 1, prob_success = 0.9):
     # initialize values
@@ -249,7 +261,7 @@ def q_prob_valit(graph, init, goal_region, gamma = 1, prob_success = 0.9):
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return i, num_actions, path, has_loop, 0.0, 0
+    return i, num_actions, path, has_loop, 0.0, num_actions
 
 def q_valit_path(graph, init, goal_region, gamma = 1):
     # initialize values
@@ -304,14 +316,9 @@ def q_valit_path(graph, init, goal_region, gamma = 1):
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return i, num_actions, path, has_loop, 0.0, 0
+    return i, num_actions, path, has_loop, 0.0, num_actions
 
-# Below code is taken from:
-# Robot Planning Python Library (RPPL)
-# Copyright (c) 2021 Alexander J. LaValle. All rights reserved.
-# This software is distributed under the simplified BSD license.
-# Compute the stationary cost-to-go function and return a solution path.
-def valit_path(graph, init, goal_region, gamma = 1):
+def valit_path_sync(graph, init, goal_region, gamma = 1, values_out = None):
     # initialize values
     for n in graph.nodes:
         set_node_attributes(graph, {n:failure_cost}, 'value')
@@ -324,6 +331,9 @@ def valit_path(graph, init, goal_region, gamma = 1):
     max_change = failure_cost
     while i < max_valits and max_change > 0.0:
         max_change = 0.0
+        update_list = []
+        next_list = {}
+
         for m in graph.nodes:
             best_cost = failure_cost
             best_n = m
@@ -338,16 +348,22 @@ def valit_path(graph, init, goal_region, gamma = 1):
             if best_cost < stay_cost:
                 if stay_cost - best_cost > max_change:
                     max_change = stay_cost - best_cost
-                set_node_attributes(graph, {m:best_cost}, 'value')
-                set_node_attributes(graph, {m:best_n}, 'next')
+                update_list.append((m, best_cost))
+                next_list[m] = best_n  # Keep track of best next node
+        for node, value in update_list:
+            set_node_attributes(graph, {node: value}, 'value')
+        for node, best_n in next_list.items():
+            set_node_attributes(graph, {node: best_n}, 'next')
         i += 1
 
-    # values_by_node = {
-    #     m: graph.nodes[m].get('value')
-    #     for m in graph.nodes
-    #     if graph.nodes[m].get('value') != 1.0e30
-    # }
-    # print(values_by_node)
+    if values_out is not None:
+        values_by_node = {
+            m: graph.nodes[m].get('value')
+            for m in graph.nodes
+            if graph.nodes[m].get('value') != 1.0e30
+        }
+        values_out["values"] = values_by_node
+
 
     path = []
     if graph.nodes[init]['value'] < failure_cost:
@@ -367,4 +383,69 @@ def valit_path(graph, init, goal_region, gamma = 1):
             if nn in goal_region:
                 goal_reached = True
     #print("Stages: " + str(i))
-    return i, num_actions, path, has_loop, 0.0, 0
+    return i, num_actions, path, has_loop, 0.0, num_actions
+
+# Below code is taken from:
+# Robot Planning Python Library (RPPL)
+# Copyright (c) 2021 Alexander J. LaValle. All rights reserved.
+# This software is distributed under the simplified BSD license.
+# Compute the stationary cost-to-go function and return a solution path.
+def valit_path(graph, init, goal_region, gamma = 1, values_out = None):
+    # initialize values
+    for n in graph.nodes:
+        set_node_attributes(graph, {n:failure_cost}, 'value')
+    for goal in goal_region:
+        set_node_attributes(graph, {goal:0.0}, 'value') # This is the termination action, although it is not an action to speak of.
+    
+    num_actions = 0
+    # main loop
+    i = 0
+    max_change = failure_cost
+    while i < max_valits and max_change > 0.0:
+        max_change = 0.0
+        for m in graph.nodes: # IMPORTANT: if we want equivalence between model-based and model-free, these need to be sorted for async valit ;)
+            best_cost = failure_cost
+            best_n = m
+            for n in graph.neighbors(m):
+                num_actions += 1
+                step_cost = graph.get_edge_data(n,m)['weight']
+                cost = gamma * graph.nodes[n]['value'] + step_cost
+                if cost < best_cost:
+                    best_cost = cost
+                    best_n = n
+            stay_cost = graph.nodes[m]['value']
+            if best_cost < stay_cost:
+                if stay_cost - best_cost > max_change:
+                    max_change = stay_cost - best_cost
+                set_node_attributes(graph, {m:best_cost}, 'value')
+                set_node_attributes(graph, {m:best_n}, 'next')
+        i += 1
+
+    if values_out is not None:
+        values_by_node = {
+            m: graph.nodes[m].get('value')
+            for m in graph.nodes
+            if graph.nodes[m].get('value') != 1.0e30
+        }
+        values_out["values"] = values_by_node
+
+
+    path = []
+    if graph.nodes[init]['value'] < failure_cost:
+        path.append(init)
+        goal_reached = False
+        visited = set()
+        current_node = init
+        has_loop = False
+        while not goal_reached:
+            visited.add(current_node)
+            nn = graph.nodes[current_node]['next']
+            if nn in visited:
+                has_loop = True
+                break
+            path.append(nn)
+            current_node = nn
+            if nn in goal_region:
+                goal_reached = True
+    #print("Stages: " + str(i))
+    return i, num_actions, path, has_loop, 0.0, num_actions
