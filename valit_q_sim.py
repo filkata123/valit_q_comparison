@@ -348,9 +348,13 @@ def run_simulations():
             iterations_array = []
             num_actions_array = []
             converge_actions_array= []
+            goal_discovered_time_array = []
+            goal_discovered_actions_array = []
+            optimal_init_ctg_time_array = []
+            optimal_init_ctg_actions_array = []
             
             for i in range (N):
-                has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _,_ = find_path(graph, p1index,p2index, algorithm, args)
+                has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _,_, additional_data = find_path(graph, p1index,p2index, algorithm, args)
 
                 # record min/max
                 if shortest_path is None or path_length < shortest_path:
@@ -369,6 +373,15 @@ def run_simulations():
                 num_actions_array.append(num_actions_taken)
                 if converged_at_action != 0: # track those that converge
                     converge_actions_array.append(converged_at_action)
+
+                if additional_data[0] is not None:
+                    goal_discovered_time_array.append(additional_data[0])
+                if additional_data[1] is not None:
+                    goal_discovered_actions_array.append(additional_data[1])
+                if additional_data[2] is not None and additional_data[2] != 0.0: # exclude non-converging ones    
+                    optimal_init_ctg_time_array.append(additional_data[2])
+                if additional_data[3] is not None and additional_data[3] != 0:
+                    optimal_init_ctg_actions_array.append(additional_data[3])
 
             if len(time_array) != 0:    
                 avg_time = np.average(time_array)
@@ -394,6 +407,42 @@ def run_simulations():
                     var_convergence_action =  0.0
                     std_convergence_action =  0.0
 
+                if goal_discovered_time_array:
+                    avg_goal_discovered_time = np.average(goal_discovered_time_array)
+                    var_goal_discovered_time = np.var(goal_discovered_time_array)
+                    std_goal_discovered_time = np.std(goal_discovered_time_array)
+                else:
+                    avg_goal_discovered_time = None
+                    var_goal_discovered_time = None
+                    std_goal_discovered_time = None
+
+                if goal_discovered_actions_array:
+                    avg_goal_discovered_actions = np.average(goal_discovered_actions_array)
+                    var_goal_discovered_actions = np.var(goal_discovered_actions_array)
+                    std_goal_discovered_actions = np.std(goal_discovered_actions_array)
+                else:
+                    avg_goal_discovered_actions = None
+                    var_goal_discovered_actions = None
+                    std_goal_discovered_actions = None
+
+                if optimal_init_ctg_time_array:
+                    avg_goal_optimal_init_ctg_time = np.average(optimal_init_ctg_time_array)
+                    var_goal_optimal_init_ctg_time = np.var(optimal_init_ctg_time_array)
+                    std_goal_optimal_init_ctg_time = np.std(optimal_init_ctg_time_array)
+                else:
+                    avg_goal_optimal_init_ctg_time = None
+                    var_goal_optimal_init_ctg_time = None
+                    std_goal_optimal_init_ctg_time = None
+
+                if optimal_init_ctg_actions_array:
+                    avg_goal_optimal_init_ctg_actions = np.average(optimal_init_ctg_actions_array)
+                    var_goal_optimal_init_ctg_actions = np.var(optimal_init_ctg_actions_array)
+                    std_goal_optimal_init_ctg_actions = np.std(optimal_init_ctg_actions_array)
+                else:
+                    avg_goal_optimal_init_ctg_actions = None
+                    var_goal_optimal_init_ctg_actions = None
+                    std_goal_optimal_init_ctg_actions = None
+
                 example_results.append({
                     "algorithm": info,
                     "goal_reached_consistently": goal_reached_consistently,
@@ -412,7 +461,19 @@ def run_simulations():
                     "std_convergence_action" : std_convergence_action,
                     "convergence_rate" : convergence_rate,
                     "shortest_path": shortest_path,
-                    "longest_path": longest_path
+                    "longest_path": longest_path,
+                    "avg_goal_discovered_time" : avg_goal_discovered_time,
+                    "var_goal_discovered_time" : var_goal_discovered_time,
+                    "std_goal_discovered_time" : std_goal_discovered_time,
+                    "avg_goal_discovered_actions" : avg_goal_discovered_actions,
+                    "var_goal_discovered_actions" : var_goal_discovered_actions,
+                    "std_goal_discovered_actions" : std_goal_discovered_actions,
+                    "avg_goal_optimal_init_ctg_time" : avg_goal_optimal_init_ctg_time, 
+                    "var_goal_optimal_init_ctg_time" : var_goal_optimal_init_ctg_time,
+                    "std_goal_optimal_init_ctg_time" : std_goal_optimal_init_ctg_time,
+                    "avg_goal_optimal_init_ctg_actions" : avg_goal_optimal_init_ctg_actions,
+                    "var_goal_optimal_init_ctg_actions" : var_goal_optimal_init_ctg_actions,
+                    "std_goal_optimal_init_ctg_actions" : std_goal_optimal_init_ctg_actions
                 })
                 print(f"Example {ex}: {info} | Goal reached consistently? -> {goal_reached_consistently} | Encountered loops? -> {loops_encountered} | avg_time={avg_time:.4f}s | var_time={var_time:.4f}s | std_time={std_time:.4f}s | avg_act_count={avg_action_count} | shortest_path={shortest_path}")
             else:
@@ -434,7 +495,19 @@ def run_simulations():
                     "std_convergence_action" : 0,
                     "convergence_rate" : 0,
                     "shortest_path": 0,
-                    "longest_path": 0
+                    "longest_path": 0,
+                    "avg_goal_discovered_time" : None,
+                    "var_goal_discovered_time" : None,
+                    "std_goal_discovered_time" : None,
+                    "avg_goal_discovered_actions" : None,
+                    "var_goal_discovered_actions" : None,
+                    "std_goal_discovered_actions" : None,
+                    "avg_goal_optimal_init_ctg_time" : None, 
+                    "var_goal_optimal_init_ctg_time" : None,
+                    "std_goal_optimal_init_ctg_time" : None,
+                    "avg_goal_optimal_init_ctg_actions" : None,
+                    "var_goal_optimal_init_ctg_actions" : None,
+                    "std_goal_optimal_init_ctg_actions" : None
                 })
                 print(f"Example {ex}: {info} | Error.")
 
@@ -445,7 +518,7 @@ def run_simulations():
 
         with open(csv_filename, "w", newline="") as f:
             writer = csv.writer(f)
-            writer.writerow(["Algorithm", "Goal reached","Loops encountered", "Avg Time", "Var Time", "STD Time", "Avg Iterations" ,"Var Iterations", "STD iterations", "Avg action count" ,"Var action count", "STD action count", "Avg convergence action" ,"Var convergence actio ", "STD convergence action", "Convergence rate", "Shortest Path", "Longest Path"])
+            writer.writerow(["Algorithm", "Goal reached","Loops encountered", "Avg Time", "Var Time", "STD Time", "Avg Iterations" ,"Var Iterations", "STD iterations", "Avg action count" ,"Var action count", "STD action count", "Avg convergence action" ,"Var convergence actio ", "STD convergence action", "Convergence rate", "Shortest Path", "Longest Path", "Avg Time Goal Discovered", "Var Time Goal Discovered", "STD Time Goal Discovered", "Avg Actions Goal Discovered", "Var Actions Goal Discovered", "STD Actions Goal Discovered", "Avg Time Optimal Initial Cost2Go", "Var Time Optimal Initial Cost2Go", "STD Time Optimal Initial Cost2Go", "Avg Actions Optimal Initial Cost2Go", "Var Actions Optimal Initial Cost2Go", "STD Actions Optimal Initial Cost2Go"])
 
             for r in example_results:
                 writer.writerow([
@@ -466,7 +539,19 @@ def run_simulations():
                     r["std_convergence_action"],
                     r["convergence_rate"],
                     r["shortest_path"],
-                    r["longest_path"]
+                    r["longest_path"],
+                    r["avg_goal_discovered_time"],
+                    r["var_goal_discovered_time"],
+                    r["std_goal_discovered_time"],
+                    r["avg_goal_discovered_actions"],
+                    r["var_goal_discovered_actions"],
+                    r["std_goal_discovered_actions"],
+                    r["avg_goal_optimal_init_ctg_time"], 
+                    r["var_goal_optimal_init_ctg_time"],
+                    r["std_goal_optimal_init_ctg_time"],
+                    r["avg_goal_optimal_init_ctg_actions"],
+                    r["var_goal_optimal_init_ctg_actions"],
+                    r["std_goal_optimal_init_ctg_actions"]
                 ])
 
 
@@ -503,7 +588,7 @@ def run_learning_rate_x_prob_model_sim():
             info = f"Stochastic-problem ({prob_success} success) Q-learning (converging, alpha = {alpha}, gamma = 1, epsilon = {epsilon})"
 
             for i in range(N):
-                has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _,_ = find_path(graph, p1index,p2index, algorithm, args)
+                has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _,_, _ = find_path(graph, p1index,p2index, algorithm, args)
 
                 # record min/max
                 if shortest_path is None or path_length < shortest_path:
@@ -632,7 +717,7 @@ def run_decaying_learning_rate_x_prob_model_sim():
                     info = f"Stochastic-problem ({prob_success} success) Q-learning (converging, alpha = 1, gamma = 1, epsilon = {epsilon}, omega = {omega}, decay_function = {decay_rate_func.__name__})"
                 
                 for i in range(N):
-                    has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _, _ = find_path(graph, p1index,p2index, algorithm, args)
+                    has_path, path, goal_in_path, _ , elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, _, _, _ = find_path(graph, p1index,p2index, algorithm, args)
 
                     # record min/max
                     if shortest_path is None or path_length < shortest_path:

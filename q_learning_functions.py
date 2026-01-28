@@ -302,7 +302,7 @@ def q_learning_path(graph, init, goal_region,
     if t_action:
         for goal in goal_region:
             graph.add_edge(goal, goal, weight=0.0)
-    
+
     # Populate Q-table with zeros - not a proper Q-table, since it's technically [state,state]
     Q = {}
     visits = {}  # Track state-action pair visits
@@ -315,6 +315,14 @@ def q_learning_path(graph, init, goal_region,
     convergence_threshold = 0.0
 
     num_actions = 0
+
+    goal_found_time = time.time()
+    goal_found_actions = 1e30
+    goal_time_recorded = False
+
+    optimal_initial_ctg_time = time.time()
+    optimal_initial_ctg_actions = 1e30
+    optimal_initial_ctg_reached = False
 
     # episode_returns = []
     # return_window = 10  # number of episodes to compare
@@ -329,8 +337,8 @@ def q_learning_path(graph, init, goal_region,
         valit_path(graph, init, goal_region, gamma, values_out=optimal_values_out)
         optimal_values = optimal_values_out["values"]
         convergence_check_time += time.time() - optimal_values_time
-
     episode_trajectories = None
+
     # Iteratively update Q-table values
     for episode in range(episodes):
         state = init
@@ -378,7 +386,7 @@ def q_learning_path(graph, init, goal_region,
             # Check when the algorithm actually convergens and report for statistics (does not affect algorithm)
             if god_eye_convergence:
                 t = time.time()
-                if (num_actions != 0 and num_actions % 5000 == 0):
+                if (num_actions != 0 and num_actions % 1000 == 0):
                     #q_values = god_eye_convergence_check(graph, Q, alpha, gamma, t_goal, goal_region)
                     # if Q == q_values:
                     #     converged_action = num_actions
@@ -388,10 +396,19 @@ def q_learning_path(graph, init, goal_region,
                         if list(graph.neighbors(s))
                     }
                     if V == optimal_values:
+                        # no need to have a flag here since we will break below, otherwise it will overwrite the converged action!!!
                        converged_action = num_actions
+                    if optimal_values[init] == V[init] and not optimal_initial_ctg_reached:
+                        optimal_initial_ctg_time = time.time() - optimal_initial_ctg_time - convergence_check_time
+                        optimal_initial_ctg_actions = num_actions
+                        optimal_initial_ctg_reached = True
                 convergence_check_time += time.time() - t
             
             state = next_state
+            if state in goal_region and not goal_time_recorded:
+                goal_found_time = time.time() - goal_found_time - convergence_check_time
+                goal_found_actions = num_actions
+                goal_time_recorded = True
             # print(Q)
             # input("Press nter")
             if t_goal and state in goal_region:
@@ -411,6 +428,12 @@ def q_learning_path(graph, init, goal_region,
             if max_delta == convergence_threshold:
                 #print(f"Q-learning converged at episode {episode}")
                 break
+    
+    # TODO: for stochastic case, also have this check for goal reached and then handle 0s in simulation!!!
+    if not optimal_initial_ctg_reached:
+        optimal_initial_ctg_time = 0.0
+        optimal_initial_ctg_actions = 0
+    additional_data = (goal_found_time, goal_found_actions, optimal_initial_ctg_time, optimal_initial_ctg_actions)
     # V = {
     #     s: min(Q[(s, a)] for a in graph.neighbors(s))
     #     for s in graph.nodes
@@ -436,7 +459,7 @@ def q_learning_path(graph, init, goal_region,
     if t_action:
         for goal in goal_region:
             graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return episode, num_actions, path, has_loop, convergence_check_time, converged_action, visits, episode_trajectories
+    return episode, num_actions, path, has_loop, convergence_check_time, converged_action, visits, episode_trajectories, additional_data
 
 # Chooser that uses digits of Pi to make choices. Works for any base up to 10.
 class PiChooser:

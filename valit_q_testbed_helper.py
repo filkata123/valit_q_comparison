@@ -90,6 +90,16 @@ def init_problem(problines, exnum, dims, radius):
     goal_radius = 0
     goal_indices = list(nx.single_source_shortest_path_length(graph, p2index, cutoff=goal_radius).keys())
 
+    if exnum in [3,13,14,16]: # do this for all nodes?
+        connected_component = nx.node_connected_component(graph, p1index)
+        G_tmp = graph.copy()
+        G_tmp.remove_node(p2index)
+        cc_without_p2 = nx.node_connected_component(G_tmp, p1index)
+        nodes_to_remove = connected_component - cc_without_p2
+        nodes_to_remove.discard(p2index)
+        
+        filtered_component = connected_component - nodes_to_remove
+        graph = graph.subgraph(filtered_component).copy() # remove disconnected
     return graph, p1index, p2index, obstacles, goal_indices
 
 
@@ -107,6 +117,7 @@ def find_path(graph, p1index, p2index, algorithm, args, kwargs = None):
     converged_at_action = 0
     visits = {}  # Track state-action visits
     episode_trajectories = []
+    additional_data = (None,None,None,None)
     #Since the graph is undirected, this is equivalent to checking if there is a path from p1index to any of the goal_indices
     if nx.has_path(graph,p1index,p2index):
         t = time.time()
@@ -118,8 +129,10 @@ def find_path(graph, p1index, p2index, algorithm, args, kwargs = None):
         # Unpack result
         if len(result) == 7: # has visits
             num_iterations_or_episodes, num_actions_taken, path, has_loop, god_eye_convergence_time, converged_at_action, visits = result
-        elif len(result) == 8 :
+        elif len(result) == 8 : # trajeectories
             num_iterations_or_episodes, num_actions_taken, path, has_loop, god_eye_convergence_time, converged_at_action, visits, episode_trajectories = result
+        elif len(result) == 9 :
+            num_iterations_or_episodes, num_actions_taken, path, has_loop, god_eye_convergence_time, converged_at_action, visits, episode_trajectories, additional_data = result
         else:
             num_iterations_or_episodes, num_actions_taken, path, has_loop, god_eye_convergence_time, converged_at_action = result
         
@@ -136,4 +149,4 @@ def find_path(graph, p1index, p2index, algorithm, args, kwargs = None):
                 if graph.get_edge_data(path[l],path[l-1]) is not None: # When there are loops, there is no weight in some cases
                     euclidean_distance += graph.get_edge_data(path[l],path[l-1])['weight']
     
-    return has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, visits, episode_trajectories
+    return has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions_taken, has_loop, converged_at_action, visits, episode_trajectories, additional_data
