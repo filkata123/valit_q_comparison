@@ -39,19 +39,23 @@ for ex_num in range(17):
     latex_lines = []
     latex_lines.append(r"\begin{table}[!h]")
     latex_lines.append(r"\resizebox{\textwidth}{!}{")
-    latex_lines.append(r"\begin{tabular}{lccc}")
+    latex_lines.append(r"\begin{tabular}{lccccccc}")
     latex_lines.append(r"\hline")
     latex_lines.append(
-        f"Algorithm (Problem {ex_num}) & Time (mean $\pm$ std) & Actions (mean $\pm$ std) & Convergence \\\\"
+        f"Algorithm (Problem {ex_num}) & Runtime (mean $\pm$ std) & \#actions (mean $\pm$ std) & Convergence & Discover goal time (mean $\pm$ std) & Discover goal \#actions (mean $\pm$ std) & Optimal Initial Cost2Go Time (mean $\pm$ std) & Optimal Initial Cost2Go \#actions (mean $\pm$ std) \\\\"
     )
     latex_lines.append(r"\hline")
 
     for _, row in df.iterrows():
         line = (
             f"{row['Algorithm']} & "
-            f"{row['Avg Time']:.4f} $\\pm$ {row['STD Time']:.4f} & "
+            f"{row['Avg Time']:.5f} $\\pm$ {row['STD Time']:.4f} & "
             f"{row['Avg action count']:.4f} $\\pm$ {row['STD action count']:.4f} & "
-            f"{100 * row['Convergence rate']:.1f} \% \\\\"
+            f"{100 * row['Convergence rate']:.1f} \% &"
+            f"{row['Avg Time Goal Discovered']:.4f} $\\pm$ {row['STD Time Goal Discovered']:.4f} & "
+            f"{row['Avg Actions Goal Discovered']:.4f} $\\pm$ {row['STD Actions Goal Discovered']:.4f} & "
+            f"{row['Avg Time Optimal Initial Cost2Go']:.4f} $\\pm$ {row['STD Time Optimal Initial Cost2Go']:.4f} & "
+            f"{row['Avg Actions Optimal Initial Cost2Go']:.4f} $\\pm$ {row['STD Actions Optimal Initial Cost2Go']:.4f} \\\\"
         )
         latex_lines.append(line)
 
