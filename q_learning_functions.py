@@ -50,6 +50,14 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
 
     num_actions = 0
 
+    goal_found_time = time.time()
+    goal_found_actions = 1e30
+    goal_time_recorded = False
+
+    optimal_initial_ctg_time = time.time()
+    optimal_initial_ctg_actions = 1e30
+    optimal_initial_ctg_reached = False
+
     convergence_check_time = 0.0
     converged_action = 0
 
@@ -62,20 +70,20 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
         # convergence_check_time += time.time() - true_cost_time
         optimal_values_time = time.time()
         optimal_values_out = {}
-        prob_valit(graph, init, goal_region, gamma, values_out=optimal_values_out)
+        prob_valit(graph, init, goal_region, gamma, values_out=optimal_values_out, prob_success=prob_success)
         optimal_values = optimal_values_out["values"]
         convergence_check_time += time.time() - optimal_values_time
 
-        edge_calc_cost_time = time.time()
-        unique_weights = {
-            data.get("weight")
-            for _, _, data in graph.edges(data=True)
-            if "weight" in data and data.get("weight") != 0
-        }
-        avg_cost = sum(unique_weights) / len(unique_weights)
-        convergence_check_time += time.time() - edge_calc_cost_time
+        # edge_calc_cost_time = time.time()
+        # unique_weights = {
+        #     data.get("weight")
+        #     for _, _, data in graph.edges(data=True)
+        #     if "weight" in data and data.get("weight") != 0
+        # }
+        # avg_cost = sum(unique_weights) / len(unique_weights)
+        # convergence_check_time += time.time() - edge_calc_cost_time
 
-    max_distance_list = []
+    distance_list = []
     
     # Iteratively update Q-table values
     for episode in range(episodes):
@@ -140,27 +148,44 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
 
             if god_eye_convergence:
                 t = time.time()
-                if (num_actions != 0 and num_actions % 10000 == 0):
-                    # V = {
-                    #     s: min(Q[(s, a)] for a in graph.neighbors(s))
-                    #     for s in graph.nodes
-                    #     if list(graph.neighbors(s))
-                    # }
-                    # if q_close(V, optimal_values, 0.1): #TODO: need to check this for constant learning rates.
-                    #     converged_action = num_actions
-                    q_values = god_eye_convergence_check(graph, Q, alpha, gamma, True, goal_region)
-                    # print(Q)
-                    # print("news")
-                    # print(q_values)
+                if (num_actions != 0 and num_actions % 1000 == 0):
+                    V = {
+                        s: min(Q[(s, a)] for a in graph.neighbors(s))
+                        for s in graph.nodes
+                        if list(graph.neighbors(s))
+                    }
+                    if q_close(V, optimal_values, 5): #TODO: need to check this for constant learning rates.
+                        converged_action = num_actions
+
+                    # max_distance = max(
+                    #     abs(V[k] - optimal_values[k]) for k in V.keys() & optimal_values.keys()
+                    # )
+                    # avg_distance = sum(
+                    #     abs(V[k] - optimal_values[k]) for k in V.keys() & optimal_values.keys()
+                    # ) / len(V.keys() & optimal_values.keys())
+                    # distance_list.append(avg_distance)
+
+                    if math.isclose(optimal_values[init], V[init], abs_tol=5) and not optimal_initial_ctg_reached:
+                        optimal_initial_ctg_time = time.time() - optimal_initial_ctg_time - convergence_check_time
+                        optimal_initial_ctg_actions = num_actions
+                        optimal_initial_ctg_reached = True
+                    #q_values = god_eye_convergence_check(graph, Q, alpha, gamma, True, goal_region)
+                    # # print(Q)
+                    # # print("news")
+                    # # print(q_values)
                     # max_distance = max(
                     #     abs(Q[k] - q_values[k]) for k in Q.keys() & q_values.keys()
                     # )
-                    # max_distance_list.append(max_distance)
-                    if q_close(Q, q_values, 0.1): #TODO: need to check this for constant learning rates.
-                       converged_action = num_actions
+                    # distance_list.append(max_distance)
+                    # if q_close(Q, q_values, 0.1): #TODO: need to check this for constant learning rates.
+                    #    converged_action = num_actions
                 convergence_check_time += time.time() - t
 
             state = next_state
+            if state in goal_region and not goal_time_recorded:
+                goal_found_time = time.time() - goal_found_time - convergence_check_time
+                goal_found_actions = num_actions
+                goal_time_recorded = True
             if state in goal_region:
                 break
         if god_eye_convergence and converged_action != 0:
@@ -169,13 +194,22 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
         # if max_delta < convergence_threshold:
         #     #print(f"Q-learning converged at episode {episode}")
         #     break
-    #print(max_distance_list)
+
+    if not optimal_initial_ctg_reached:
+        optimal_initial_ctg_time = 0.0
+        optimal_initial_ctg_actions = 0
+    if not goal_time_recorded:
+        goal_found_time = 0.0
+        goal_found_actions = 0
+    additional_data = (goal_found_time, goal_found_actions, optimal_initial_ctg_time, optimal_initial_ctg_actions)
+    #print(distance_list)
     # V = {
     #     s: min(Q[(s, a)] for a in graph.neighbors(s))
     #     for s in graph.nodes
     #     if list(graph.neighbors(s))
     # }
     # print(V)
+    # print(optimal_values)
     # Extract path from learned Q-values
     path = [init]
     current = init
@@ -212,7 +246,7 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
         i += 1
     for goal in goal_region:
         graph.remove_edge(goal, goal) # clean up self-loop at goal
-    return episode, num_actions, path, has_loop, convergence_check_time, converged_action, visits
+    return episode, num_actions, path, has_loop, convergence_check_time, converged_action, visits, [], additional_data
 
 # Compute solution path from Q-table
 def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000, initial_epsilon=1):
@@ -429,7 +463,6 @@ def q_learning_path(graph, init, goal_region,
                 #print(f"Q-learning converged at episode {episode}")
                 break
     
-    # TODO: for stochastic case, also have this check for goal reached and then handle 0s in simulation!!!
     if not optimal_initial_ctg_reached:
         optimal_initial_ctg_time = 0.0
         optimal_initial_ctg_actions = 0
