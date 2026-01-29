@@ -5,7 +5,7 @@ import re
 for ex_num in range(17):
     if ex_num == 6:
         continue
-    file = f"example_{ex_num}_results_100_samples.csv"
+    file = f"..\steve_sims_3000steps\example_{ex_num}_results_100_samples.csv"
     df = pd.read_csv(file)
 
     # ---------- Helper: shorten algorithm names ----------
@@ -13,8 +13,11 @@ for ex_num in range(17):
         name_lower = name.lower()
 
         # Model-free Dijkstra: keep name
-        if "synchronous" in name_lower:
-            return "Model-free \\\ Synchronous Value Iteration"
+        if "value iteration" in name_lower and "synchronous" not in name_lower:
+            return "Model-free \\\ Asynchronous Value Iteration"
+        
+        if "value iteration" in name_lower and "synchronous" in name_lower:
+            return "Model-free Value Iteration"
 
         # Extract epsilon
         eps_match = re.search(r"epsilon\s*=\s*([0-9.]+)", name_lower)
@@ -65,3 +68,25 @@ for ex_num in range(17):
 
     latex_code = "\n".join(latex_lines)
     print(latex_code)
+
+    # ---------- Speedup calculation ----------
+    dijkstra_row = df[df["Algorithm"] == "Model-free Dijkstra"]
+    qlearning_eps_row = df[df["Algorithm"] == r"Q-learning ($\epsilon=0.9$)"]
+
+    if not dijkstra_row.empty and not qlearning_eps_row.empty:
+        dijkstra_time = dijkstra_row.iloc[0]["Avg Time"]
+        q_time = qlearning_eps_row.iloc[0]["Avg Time"]
+
+        dijkstra_actions = dijkstra_row.iloc[0]["Avg action count"]
+        q_actions = qlearning_eps_row.iloc[0]["Avg action count"]
+
+        time_speedup = q_time / dijkstra_time
+        action_speedup = q_actions / dijkstra_actions
+
+        print(
+            f"Model-free Dijkstra vs Q-learning (ε=0.9) — Problem {ex_num}:\n"
+            f"  Runtime speedup: {time_speedup:.2f}× faster\n"
+            f"  Action reduction: {action_speedup:.2f}× fewer actions\n"
+        )
+    else:
+        print(f"Speedup comparison unavailable for Problem {ex_num}\n")

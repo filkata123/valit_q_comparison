@@ -463,6 +463,7 @@ def q_learning_path(graph, init, goal_region,
 
 # Chooser that uses digits of Pi to make choices. Works for any base up to 10.
 class PiChooser:
+    # Gets initialized once, the index changes based on the choose function, regardless from where it is called (global index)
     def __init__(self, base4_filename):
         # gotten in a different way
         with open(base4_filename, "r") as f:
