@@ -7,6 +7,7 @@ import csv
 import numpy as np 
 from itertools import product
 import networkx as nx
+from datetime import datetime
 
 # get example list
 problem = open('problem_circles.txt')
@@ -21,6 +22,7 @@ radius = 1 # neightborhood radius (1 = four-neighbors)
 
 def run_simulations():
     N = 100
+    print("Start: " + str(datetime.now()))
     for ex in range(0, int(num_of_ex)):
         graph, p1index, p2index, obstacles, goal_indices = init_problem(problines, ex, dims, radius)
 
@@ -553,7 +555,7 @@ def run_simulations():
                     r["var_goal_optimal_init_ctg_actions"],
                     r["std_goal_optimal_init_ctg_actions"]
                 ])
-
+    print("End: " + str(datetime.now()))
 
 def run_learning_rate_x_prob_model_sim():
     N = 100
