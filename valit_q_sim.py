@@ -806,12 +806,16 @@ def run_stochastic_convergence_simulations():
             for prob in prob_model_success:
                 for epsilon in epsilons:
                     algorithms.append(
+                    (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.05, 1, epsilon, True, prob),
+                    f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.05, gamma = 1, epsilon = {epsilon})"))
+
                     algorithms.append(
                     (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.1, 1, epsilon, True, prob),
                     f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.1, gamma = 1, epsilon = {epsilon})"))
 
+                    algorithms.append(
                     (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.3, 1, epsilon, True, prob),
-                    f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.05, gamma = 1, epsilon = {epsilon})"))
+                    f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.3, gamma = 1, epsilon = {epsilon})"))
 
                     algorithms.append(
                     (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.5, 1, epsilon, True, prob),
