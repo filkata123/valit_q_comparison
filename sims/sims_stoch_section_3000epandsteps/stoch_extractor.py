@@ -6,7 +6,7 @@ import string
 for ex_num in [1,10,11]:#range(17):
     if ex_num == 6:
         continue
-    file = f"../example_{ex_num}_stochastic_results_10_samples.csv"
+    file = f"example_{ex_num}_stochastic_results_10_samples.csv"
     df = pd.read_csv(file)
 
     
@@ -37,7 +37,7 @@ for ex_num in [1,10,11]:#range(17):
 
         if "q-learning" in name_lower:
             alpha, epsilon = extract_alpha_epsilon(name_lower)
-            return rf"Q-learning ($\alpha={alpha}, \epsilon={epsilon}$)"
+            return rf"Q-learning ($\rho={alpha}, \epsilon={epsilon}$)"
 
         return name
 
@@ -49,12 +49,14 @@ for ex_num in [1,10,11]:#range(17):
     for prob, subdf in df.groupby("SuccessProb"):
         latex_lines = []
         latex_lines.append(r"\begin{table}[!h]")
+        latex_lines.append(rf"\caption{{Comparing performance of \ql{{}} as we change the learning rate $\rho$ in stochastic problem with $\gamma = {prob}$ (Problem {ex_num}). Two versions of value iteration are also appended for contrast}}")
+        latex_lines.append(fr"\label{{tab:prob{ex_num}stoch{prob}}}")
         latex_lines.append(r"\resizebox{\textwidth}{!}{")
-        latex_lines.append(r"\begin{tabular}{lcccccccc}")
+        latex_lines.append(r"\begin{tabular}{lccccccccc}")
         latex_lines.append(r"\hline")
 
         latex_lines.append(
-            rf"(Prob. Success = {prob}) Algorithm (Problem {ex_num}) "
+            rf"Algorithm (Problem {ex_num}) ($\gamma$ = {prob}) "
             r"& Runtime (mean $\pm$ std) "
             r"& \#actions (mean $\pm$ std) "
             r"& Convergence "
@@ -62,7 +64,8 @@ for ex_num in [1,10,11]:#range(17):
             r"& Discover goal \#actions (mean $\pm$ std) "
             r"& Optimal Initial Cost2Go Time (mean $\pm$ std) "
             r"& Optimal Initial Cost2Go \#actions (mean $\pm$ std)"
-            r"& Optimal Initial Cost2Go Convergence \\"
+            r"& Optimal Initial Cost2Go Convergence "
+            r"& Shortest/Longest Path \\"
         )
 
         latex_lines.append(r"\hline")
@@ -83,7 +86,8 @@ for ex_num in [1,10,11]:#range(17):
                     f"{row['PrettyAlg']} & "
                     f"{runtime_col} & "
                     f"{actions_col} & "
-                    "N/A & N/A & N/A & N/A & N/A & N/A \\\\"
+                    "N/A & N/A & N/A & N/A & N/A & N/A & "
+                    f"{row['Shortest Path']}/{row['Longest Path']} \\\\"
                 )
             else:
                 latex_lines.append(
@@ -95,7 +99,8 @@ for ex_num in [1,10,11]:#range(17):
                     f"{row['Avg Actions Goal Discovered']:.4f} $\\pm$ {row['STD Actions Goal Discovered']:.4f} & "
                     f"{row['Avg Time Optimal Initial Cost2Go']:.4f} $\\pm$ {row['STD Time Optimal Initial Cost2Go']:.4f} & "
                     f"{row['Avg Actions Optimal Initial Cost2Go']:.4f} $\\pm$ {row['STD Actions Optimal Initial Cost2Go']:.4f} & "
-                    f"{100 * row['Convergence rate Optimal Initial Cost2Go']:.1f}\\% \\\\"
+                    f"{100 * row['Convergence rate Optimal Initial Cost2Go']:.1f}\\% & "
+                    f"{row['Shortest Path']}/{row['Longest Path']} \\\\"
                 )
         latex_lines.append(r"\hline")
         latex_lines.append(r"\end{tabular}}")

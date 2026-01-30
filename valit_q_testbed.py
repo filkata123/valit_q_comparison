@@ -55,31 +55,45 @@ def draw_discs(dlist,screen):
         pygame.draw.circle(screen,grey,[d[0],d[1]],d[2])
 
 def draw_pygame(graph, obstacles, p1index, has_path, path, euclidean_distance, goal_indices):
-    xmax = 800 # force a square environment
-    ymax = 800
+    xmax = 815 # force a square environment
+    ymax = 815
+    PADDING = 5
     screen = pygame.display.set_mode([xmax,ymax])
     pygame.display.set_caption('Grid Planner')
     pygame.init()
     screen.fill(black)
-    draw_discs(obstacles, screen)
-    draw_graph_edges(graph, screen)
+    inner_width = xmax - 2 * PADDING
+    inner_height = ymax - 2 * PADDING
+    inner_surface = pygame.Surface((inner_width, inner_height))
+    inner_surface.fill(black)
+
+    draw_discs(obstacles, inner_surface)
+    draw_graph_edges(graph, inner_surface)
 
     if has_path:
-        for l in range(len(path)):
-            if l > 0:
-                pygame.draw.line(screen,green,G.nodes[path[l]]['point'],G.nodes[path[l-1]]['point'],5)
-        pygame.display.set_caption('Grid Planner, Euclidean Distance: ' +str(euclidean_distance))
+        for l in range(1, len(path)):
+            pygame.draw.line(
+                inner_surface,
+                green,
+                G.nodes[path[l]]['point'],
+                G.nodes[path[l-1]]['point'],
+                5
+            )
+        pygame.display.set_caption(
+            'Grid Planner, Euclidean Distance: ' + str(euclidean_distance)
+        )
     else:
         print('Path not found')
         pygame.display.set_caption('Grid Planner')
-    pygame.draw.circle(screen,green,G.nodes[p1index]['point'],10)
+    pygame.draw.circle(inner_surface,green,G.nodes[p1index]['point'],10)
     for g in goal_indices:
-        pygame.draw.circle(screen,red,G.nodes[g]['point'],10)
+        pygame.draw.circle(inner_surface,red,G.nodes[g]['point'],10)
     # Old implementation of visualization
-    #pygame.draw.circle(screen,green,initial,10)
-    #pygame.draw.circle(screen,red,goal,10)
+    #pygame.draw.circle(inner_surface,green,initial,10)
+    #pygame.draw.circle(inner_surface,red,goal,10)
+    screen.blit(inner_surface, (PADDING, PADDING))
     pygame.display.update()
-    #pygame.image.save(screen, "screenshot.png")
+    #pygame.image.save(screen, f"Example_{counter}.png")
 
 def draw_visits_heatmap(graph, obstacles, visits, p1index, goal_indices, title="State-Action Visit Frequency Heatmap"):
     xmax = 800
@@ -248,7 +262,7 @@ def Draw():
     if use_qlearning:
         # has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 1000, 500, 1, 1, 1, False, 0.5, visit_count_decay, (0.75,), num_nodes))
         # has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 1000, 500, 0.9, 1, 1, False, 0.5))
-        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits, episode_trajectories, additional_data = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 3000, 3000, 0.05, 1, 1, True, 0.999))
+        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits, episode_trajectories, additional_data = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 3000, 3000, 0.5, 1, 0, True, 0.9))
         if converged_at_action != 0:
             print("Converged at " + str(converged_at_action))
         else:
@@ -257,7 +271,7 @@ def Draw():
         print("Number of episodes: " + str(num_iterations_or_episodes))
         #visualize_trajectories(G, obstacles, p1index, goal_indices, episode_trajectories, init=p1index, fps=120, video_file="q_learning_trajectory.mp4")
     else:
-        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits, episode_trajectories,  additional_data = find_path(G, p1index,p2index, prob_valit, (G, p1index, goal_indices,1, None, None, 0.5))
+        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits, episode_trajectories,  additional_data = find_path(G, p1index,p2index, valit_path, (G, p1index, goal_indices))
         print('value iteration:   time elapsed:     ' + str(elapsed_time) + ' seconds')
         print("Number of iterations: " + str(num_iterations_or_episodes))
     if goal_in_path:
