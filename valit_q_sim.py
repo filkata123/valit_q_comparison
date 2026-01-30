@@ -805,6 +805,14 @@ def run_stochastic_convergence_simulations():
             algorithms = []
             for prob in prob_model_success:
                 for epsilon in epsilons:
+                    # algorithms.append(
+                    # (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.05, 1, epsilon, True, prob),
+                    # f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.05, gamma = 1, epsilon = {epsilon})"))
+
+                    # algorithms.append(
+                    # (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.1, 1, epsilon, True, prob),
+                    # f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.1, gamma = 1, epsilon = {epsilon})"))
+
                     algorithms.append(
                     (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.5, 1, epsilon, True, prob),
                     f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.5, gamma = 1, epsilon = {epsilon})"))
@@ -862,9 +870,6 @@ def run_stochastic_convergence_simulations():
 
                     if goal_in_path == False:
                         goal_reached_consistently = False
-                    
-                    if has_loop:
-                        loops_encountered = True
 
                     time_array.append(elapsed_time)
                     iterations_array.append(num_iterations_or_episodes)

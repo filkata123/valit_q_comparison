@@ -6,7 +6,7 @@ import string
 for ex_num in [1,10,11]:#range(17):
     if ex_num == 6:
         continue
-    file = f"example_{ex_num}_stochastic_results_2_samples.csv"
+    file = f"../example_{ex_num}_stochastic_results_10_samples.csv"
     df = pd.read_csv(file)
 
     
@@ -69,18 +69,34 @@ for ex_num in [1,10,11]:#range(17):
 
         # Enumerate algorithms
         for _, (_, row) in zip(string.ascii_lowercase, subdf.iterrows()):
-            latex_lines.append(
-                f"{row['PrettyAlg']} & "
-                f"{row['Avg Time']:.5f} $\\pm$ {row['STD Time']:.4f} & "
-                f"{row['Avg action count']:.4f} $\\pm$ {row['STD action count']:.4f} & "
-                f"{100 * row['Convergence rate']:.1f}\\% & "
-                f"{row['Avg Time Goal Discovered']:.4f} $\\pm$ {row['STD Time Goal Discovered']:.4f} & "
-                f"{row['Avg Actions Goal Discovered']:.4f} $\\pm$ {row['STD Actions Goal Discovered']:.4f} & "
-                f"{row['Avg Time Optimal Initial Cost2Go']:.4f} $\\pm$ {row['STD Time Optimal Initial Cost2Go']:.4f} & "
-                f"{row['Avg Actions Optimal Initial Cost2Go']:.4f} $\\pm$ {row['STD Actions Optimal Initial Cost2Go']:.4f} & "
-                f"{100 * row['Convergence rate Optimal Initial Cost2Go']:.1f}\\% & \\\\"
+            is_value_iteration = "value iteration" in row["Algorithm"].lower()
+
+            runtime_col = (
+                f"{row['Avg Time']:.5f} $\\pm$ {row['STD Time']:.4f}"
+            )
+            actions_col = (
+                f"{row['Avg action count']:.4f} $\\pm$ {row['STD action count']:.4f}"
             )
 
+            if is_value_iteration:
+                latex_lines.append(
+                    f"{row['PrettyAlg']} & "
+                    f"{runtime_col} & "
+                    f"{actions_col} & "
+                    "N/A & N/A & N/A & N/A & N/A & N/A \\\\"
+                )
+            else:
+                latex_lines.append(
+                    f"{row['PrettyAlg']} & "
+                    f"{runtime_col} & "
+                    f"{actions_col} & "
+                    f"{100 * row['Convergence rate']:.1f}\\% & "
+                    f"{row['Avg Time Goal Discovered']:.4f} $\\pm$ {row['STD Time Goal Discovered']:.4f} & "
+                    f"{row['Avg Actions Goal Discovered']:.4f} $\\pm$ {row['STD Actions Goal Discovered']:.4f} & "
+                    f"{row['Avg Time Optimal Initial Cost2Go']:.4f} $\\pm$ {row['STD Time Optimal Initial Cost2Go']:.4f} & "
+                    f"{row['Avg Actions Optimal Initial Cost2Go']:.4f} $\\pm$ {row['STD Actions Optimal Initial Cost2Go']:.4f} & "
+                    f"{100 * row['Convergence rate Optimal Initial Cost2Go']:.1f}\\% \\\\"
+                )
         latex_lines.append(r"\hline")
         latex_lines.append(r"\end{tabular}}")
         latex_lines.append(r"\end{table}")
