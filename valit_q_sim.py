@@ -785,7 +785,7 @@ def run_decaying_learning_rate_x_prob_model_sim():
 
 
 def run_stochastic_convergence_simulations():
-    N = 10
+    N = 100
     ex_num = [1,10,11]
     print("Start: " + str(datetime.now()))
     for ex in ex_num:
