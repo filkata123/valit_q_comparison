@@ -203,6 +203,7 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
         goal_found_actions = 0
     additional_data = (goal_found_time, goal_found_actions, optimal_initial_ctg_time, optimal_initial_ctg_actions)
     #print(distance_list)
+    print({k: abs(V[k] - optimal_values[k]) for k in V.keys() & optimal_values.keys()})
     # V = {
     #     s: min(Q[(s, a)] for a in graph.neighbors(s))
     #     for s in graph.nodes
