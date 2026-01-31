@@ -786,7 +786,8 @@ def run_decaying_learning_rate_x_prob_model_sim():
 
 def run_stochastic_convergence_simulations():
     N = 10
-    ex_num = [1,10,11]
+    #ex_num = [1,10,11]
+    ex_num = [8, 16]
     print("Start: " + str(datetime.now()))
     for ex in ex_num:
         graph, p1index, p2index, obstacles, goal_indices = init_problem(problines, ex, dims, radius)
@@ -805,25 +806,25 @@ def run_stochastic_convergence_simulations():
             algorithms = []
             for prob in prob_model_success:
                 for epsilon in epsilons:
-                    algorithms.append(
-                    (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.05, 1, epsilon, True, prob),
-                    f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.05, gamma = 1, epsilon = {epsilon})"))
+                    # algorithms.append(
+                    # (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.05, 1, epsilon, True, prob),
+                    # f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.05, gamma = 1, epsilon = {epsilon})"))
 
                     algorithms.append(
                     (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.1, 1, epsilon, True, prob),
                     f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.1, gamma = 1, epsilon = {epsilon})"))
 
-                    algorithms.append(
-                    (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.3, 1, epsilon, True, prob),
-                    f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.3, gamma = 1, epsilon = {epsilon})"))
+                    # algorithms.append(
+                    # (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.3, 1, epsilon, True, prob),
+                    # f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.3, gamma = 1, epsilon = {epsilon})"))
 
-                    algorithms.append(
-                    (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.5, 1, epsilon, True, prob),
-                    f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.5, gamma = 1, epsilon = {epsilon})"))
+                    # algorithms.append(
+                    # (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.5, 1, epsilon, True, prob),
+                    # f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.5, gamma = 1, epsilon = {epsilon})"))
 
-                    algorithms.append(
-                    (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.7, 1, epsilon, True, prob),
-                    f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.7, gamma = 1, epsilon = {epsilon})"))
+                    # algorithms.append(
+                    # (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.7, 1, epsilon, True, prob),
+                    # f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.7, gamma = 1, epsilon = {epsilon})"))
 
                     # algorithms.append(
                     # (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.9, 1, epsilon, True, prob),
@@ -834,19 +835,19 @@ def run_stochastic_convergence_simulations():
                     # f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.99, gamma = 1, epsilon = {epsilon})"))
 
                     # # Only check with 0.75?? lower omega means slower convergence -> might be better
-                    # algorithms.append(
-                    # (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 1, 1, epsilon, True, prob, polynomial_decay, (0.2,)),
-                    # f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 1\num_steps_taken^0.2, gamma = 1, epsilon = {epsilon})"))
+                    algorithms.append(
+                    (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 1, 1, epsilon, True, prob, visit_count_decay, (0.7,)),
+                    f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 1\num_steps_taken^0.7, gamma = 1, epsilon = {epsilon})"))
 
-                algorithms.append(
-                    (prob_valit, (graph, p1index, goal_indices, 1, None, None, prob),
-                    f"Stochastic Async Value Iteration ({prob} success)"),
-                )
+                # algorithms.append(
+                #     (prob_valit, (graph, p1index, goal_indices, 1, None, None, prob),
+                #     f"Stochastic Async Value Iteration ({prob} success)"),
+                # )
 
-                algorithms.append(
-                    (prob_valit_sync, (graph, p1index, goal_indices, 1, None, None, prob),
-                    f"Stochastic Value Iteration ({prob} success)"),
-                )
+                # algorithms.append(
+                #     (prob_valit_sync, (graph, p1index, goal_indices, 1, None, None, prob),
+                #     f"Stochastic Value Iteration ({prob} success)"),
+                # )
 
             
             for (algorithm, args, info) in algorithms:

@@ -6,7 +6,7 @@ import string
 for ex_num in [1,10,11]:#range(17):
     if ex_num == 6:
         continue
-    file = f"example_{ex_num}_stochastic_results_10_samples.csv"
+    file = f"sims_samples_i7-9750H_32GBRam_RTX2080/low_prob_example_{ex_num}_stochastic_results_10_samples.csv"
     df = pd.read_csv(file)
 
     
@@ -46,6 +46,11 @@ for ex_num in [1,10,11]:#range(17):
     df["SuccessProb"] = df["Algorithm"].apply(extract_success_prob)
     df["PrettyAlg"] = df["Algorithm"].apply(pretty_algorithm_name)
 
+    print(len(df))
+    print(len(df.drop_duplicates()))
+
+    df = df = df.drop_duplicates()
+
     for prob, subdf in df.groupby("SuccessProb"):
         latex_lines = []
         latex_lines.append(r"\begin{table}[!h]")
@@ -71,7 +76,7 @@ for ex_num in [1,10,11]:#range(17):
         latex_lines.append(r"\hline")
 
         # Enumerate algorithms
-        for _, (_, row) in zip(string.ascii_lowercase, subdf.iterrows()):
+        for _, row in subdf.iterrows():
             is_value_iteration = "value iteration" in row["Algorithm"].lower()
 
             runtime_col = (
