@@ -834,10 +834,11 @@ def run_stochastic_convergence_simulations():
                     # (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 0.99, 1, epsilon, True, prob),
                     # f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 0.99, gamma = 1, epsilon = {epsilon})"))
 
+                for epsilon in epsilons:
                     # # Only check with 0.75?? lower omega means slower convergence -> might be better
                     algorithms.append(
                     (q_learning_stochastic_path, (graph, p1index, goal_indices, 3000, 3000, 1, 1, epsilon, True, prob, visit_count_decay, (0.7,)),
-                    f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 1\num_steps_taken^0.7, gamma = 1, epsilon = {epsilon})"))
+                    f"Stochastic-problem ({prob} success) Q-learning (converging, alpha = 1\\num_steps_taken^0.7, gamma = 1, epsilon = {epsilon})"))
 
                 # algorithms.append(
                 #     (prob_valit, (graph, p1index, goal_indices, 1, None, None, prob),
@@ -849,7 +850,6 @@ def run_stochastic_convergence_simulations():
                 #     f"Stochastic Value Iteration ({prob} success)"),
                 # )
 
-            
             for (algorithm, args, info) in algorithms:
                 avg_time = 0
                 longest_path = None
