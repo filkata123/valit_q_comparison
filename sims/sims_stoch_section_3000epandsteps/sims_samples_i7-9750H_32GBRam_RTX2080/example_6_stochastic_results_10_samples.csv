@@ -1,0 +1,53 @@
+Algorithm,Goal reached,Avg Time,Var Time,STD Time,Avg Iterations,Var Iterations,STD iterations,Avg action count,Var action count,STD action count,Avg convergence action,Var convergence action,STD convergence action,Convergence rate,Shortest Path,Longest Path,Avg Time Goal Discovered,Var Time Goal Discovered,STD Time Goal Discovered,Avg Actions Goal Discovered,Var Actions Goal Discovered,STD Actions Goal Discovered,Avg Time Optimal Initial Cost2Go,Var Time Optimal Initial Cost2Go,STD Time Optimal Initial Cost2Go,Avg Actions Optimal Initial Cost2Go,Var Actions Optimal Initial Cost2Go,STD Actions Optimal Initial Cost2Go,Convergence rate Optimal Initial Cost2Go
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.5, gamma = 1, epsilon = 0)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.7, gamma = 1, epsilon = 0)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.9, gamma = 1, epsilon = 0)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.99, gamma = 1, epsilon = 0)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.5, gamma = 1, epsilon = 0.25)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.7, gamma = 1, epsilon = 0.25)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.9, gamma = 1, epsilon = 0.25)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.99, gamma = 1, epsilon = 0.25)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.5, gamma = 1, epsilon = 0.5)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.7, gamma = 1, epsilon = 0.5)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.9, gamma = 1, epsilon = 0.5)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.99, gamma = 1, epsilon = 0.5)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.5, gamma = 1, epsilon = 0.75)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.7, gamma = 1, epsilon = 0.75)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.9, gamma = 1, epsilon = 0.75)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.99, gamma = 1, epsilon = 0.75)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.5, gamma = 1, epsilon = 0.9)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.7, gamma = 1, epsilon = 0.9)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.9, gamma = 1, epsilon = 0.9)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.99, gamma = 1, epsilon = 0.9)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.5, gamma = 1, epsilon = 1)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.7, gamma = 1, epsilon = 1)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.9, gamma = 1, epsilon = 1)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.999 success) Q-learning (converging, alpha = 0.99, gamma = 1, epsilon = 1)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+Stochastic Async Value Iteration (0.999 success),False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+Stochastic Value Iteration (0.999 success),False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.5, gamma = 1, epsilon = 0)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.7, gamma = 1, epsilon = 0)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.9, gamma = 1, epsilon = 0)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.99, gamma = 1, epsilon = 0)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.5, gamma = 1, epsilon = 0.25)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.7, gamma = 1, epsilon = 0.25)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.9, gamma = 1, epsilon = 0.25)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.99, gamma = 1, epsilon = 0.25)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.5, gamma = 1, epsilon = 0.5)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.7, gamma = 1, epsilon = 0.5)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.9, gamma = 1, epsilon = 0.5)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.99, gamma = 1, epsilon = 0.5)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.5, gamma = 1, epsilon = 0.75)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.7, gamma = 1, epsilon = 0.75)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.9, gamma = 1, epsilon = 0.75)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.99, gamma = 1, epsilon = 0.75)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.5, gamma = 1, epsilon = 0.9)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.7, gamma = 1, epsilon = 0.9)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.9, gamma = 1, epsilon = 0.9)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.99, gamma = 1, epsilon = 0.9)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.5, gamma = 1, epsilon = 1)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.7, gamma = 1, epsilon = 1)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.9, gamma = 1, epsilon = 1)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+"Stochastic-problem (0.99 success) Q-learning (converging, alpha = 0.99, gamma = 1, epsilon = 1)",False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+Stochastic Async Value Iteration (0.99 success),False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
+Stochastic Value Iteration (0.99 success),False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,0.0
