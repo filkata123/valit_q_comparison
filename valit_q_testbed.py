@@ -30,6 +30,31 @@ red = 255, 0, 0
 blue = 50, 50, 255
 green = 0, 255, 0
 
+def draw_figure_label(screen, text, padding=5):
+    font = pygame.font.SysFont("DejaVu Sans", 80, bold=True)
+
+    label_surface = font.render(text, True, (255, 255, 255))
+    label_rect = label_surface.get_rect()
+
+    bg_padding = 12
+    screen_width, screen_height = screen.get_size()
+    bg_rect = pygame.Rect(
+        padding,
+        screen_height - label_rect.height - 2 * bg_padding - padding,
+        label_rect.width + 2 * bg_padding,
+        label_rect.height + 2 * bg_padding
+    )
+
+    # Semi-transparent background
+    bg_surface = pygame.Surface(bg_rect.size, pygame.SRCALPHA)
+    bg_surface.fill((0, 0, 0, 180))
+
+    screen.blit(bg_surface, bg_rect.topleft)
+    screen.blit(
+        label_surface,
+        (bg_rect.x + bg_padding, bg_rect.y + bg_padding)
+    )
+
 def draw_graph_edges(g,screen):
     # for u, v, data in g.edges(data=True):
     #     w = data.get('weight', 1)
@@ -54,7 +79,7 @@ def draw_discs(dlist,screen):
     for d in dlist:
         pygame.draw.circle(screen,grey,[d[0],d[1]],d[2])
 
-def draw_pygame(graph, obstacles, p1index, has_path, path, euclidean_distance, goal_indices):
+def draw_pygame(graph, obstacles, p1index, has_path, path, euclidean_distance, goal_indices, exnum):
     xmax = 815 # force a square environment
     ymax = 815
     PADDING = 5
@@ -92,8 +117,9 @@ def draw_pygame(graph, obstacles, p1index, has_path, path, euclidean_distance, g
     #pygame.draw.circle(inner_surface,green,initial,10)
     #pygame.draw.circle(inner_surface,red,goal,10)
     screen.blit(inner_surface, (PADDING, PADDING))
+    #draw_figure_label(screen, str(exnum))
     pygame.display.update()
-    #pygame.image.save(screen, f"Example_{counter}.png")
+    #pygame.image.save(screen, f"Example_{exnum}.png")
 
 def draw_visits_heatmap(graph, obstacles, visits, p1index, goal_indices, title="State-Action Visit Frequency Heatmap"):
     xmax = 800
@@ -262,14 +288,14 @@ def Draw():
     if use_qlearning:
         # has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 1000, 500, 1, 1, 1, False, 0.5, visit_count_decay, (0.75,), num_nodes))
         # has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 1000, 500, 0.9, 1, 1, False, 0.5))
-        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits, episode_trajectories, additional_data = find_path(G, p1index,p2index, q_learning_stochastic_path, (G, p1index, goal_indices, 3000, 3000, 1, 1, 1, True, 0.5, visit_count_decay, (0.7,)))
+        has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits, episode_trajectories, additional_data = find_path(G, p1index,p2index, q_learning_path, (G, p1index, goal_indices, 1000, 500, 1,1, 0, False, True, "random"))
         if converged_at_action != 0:
             print("Converged at " + str(converged_at_action))
         else:
             print("No convergence.")
         print('Q-learning:   time elapsed:     ' + str(elapsed_time) + ' seconds')
         print("Number of episodes: " + str(num_iterations_or_episodes))
-        #visualize_trajectories(G, obstacles, p1index, goal_indices, episode_trajectories, init=p1index, fps=120, video_file="q_learning_trajectory.mp4")
+        visualize_trajectories(G, obstacles, p1index, goal_indices, episode_trajectories, init=p1index, fps=120, video_file=None)
     else:
         has_path, path, goal_in_path, euclidean_distance, elapsed_time, path_length, num_iterations_or_episodes, num_actions, has_loop, converged_at_action, visits, episode_trajectories,  additional_data = find_path(G, p1index,p2index, valit_path, (G, p1index, goal_indices))
         print('value iteration:   time elapsed:     ' + str(elapsed_time) + ' seconds')
@@ -284,7 +310,7 @@ def Draw():
     if viz_visits:
         draw_visits_heatmap(G, obstacles, visits,p1index,goal_indices, title=f"Q-Learning Visits (Example {exnum})")
     else:
-        draw_pygame(G, obstacles, p1index, has_path, path, euclidean_distance, goal_indices)
+        draw_pygame(G, obstacles, p1index, has_path, path, euclidean_distance, goal_indices, exnum)
         
 # get example list
 problem = open('problem_circles.txt')

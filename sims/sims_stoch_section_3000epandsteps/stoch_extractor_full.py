@@ -3,10 +3,10 @@ import re
 import string
 
 # Load CSV
-for ex_num in [1,10,11]:#range(17):
-    if ex_num == 6:
+for ex_num in [0]: #range(17):
+    if ex_num in [1, 6, 10, 11]:
         continue
-    file = f"sims_samples_i7-9750H_32GBRam_RTX2080/low_prob_example_{ex_num}_stochastic_results_10_samples.csv"
+    file = f"examples_i5-12400F_16GBRam_RTX3060/example_{ex_num}_stochastic_results_10_samples.csv"
     df = pd.read_csv(file)
 
     
@@ -19,7 +19,7 @@ for ex_num in [1,10,11]:#range(17):
         return m.group(1) if m else "unknown"
 
     def extract_alpha_epsilon(name: str):
-        alpha = re.search(r"alpha\s*=\s*([0-9.]+)", name)
+        alpha = re.search(r"alpha\s*=\s*([^,)\s]+)", name)
         epsilon = re.search(r"epsilon\s*=\s*([0-9.]+)", name)
         return (
             alpha.group(1) if alpha else None,
@@ -37,6 +37,8 @@ for ex_num in [1,10,11]:#range(17):
 
         if "q-learning" in name_lower:
             alpha, epsilon = extract_alpha_epsilon(name_lower)
+            # if alpha != "0.1":
+            #     alpha = "\\frac{1}{n(x,u)}^{(0.7)}"
             return rf"Q-learning ($\rho={alpha}, \epsilon={epsilon}$)"
 
         return name
@@ -46,10 +48,7 @@ for ex_num in [1,10,11]:#range(17):
     df["SuccessProb"] = df["Algorithm"].apply(extract_success_prob)
     df["PrettyAlg"] = df["Algorithm"].apply(pretty_algorithm_name)
 
-    print(len(df))
-    print(len(df.drop_duplicates()))
-
-    df = df = df.drop_duplicates()
+    df = df.drop_duplicates()
 
     for prob, subdf in df.groupby("SuccessProb"):
         latex_lines = []
@@ -61,16 +60,16 @@ for ex_num in [1,10,11]:#range(17):
         latex_lines.append(r"\hline")
 
         latex_lines.append(
-            rf"Algorithm (Problem {ex_num}) ($\gamma$ = {prob}) "
-            r"& Runtime (mean $\pm$ std) "
-            r"& \#actions (mean $\pm$ std) "
+            rf"\makecell{{Algorithm (Problem {ex_num}) \\ ($\gamma$ = {prob})}} "
+            r"& \makecell{Runtime \\ (mean $\pm$ std)}"
+            r"& \makecell{\#actions \\ (mean $\pm$ std)} "
             r"& Convergence "
-            r"& Discover goal time (mean $\pm$ std) "
-            r"& Discover goal \#actions (mean $\pm$ std) "
-            r"& Optimal Initial Cost2Go Time (mean $\pm$ std) "
-            r"& Optimal Initial Cost2Go \#actions (mean $\pm$ std)"
-            r"& Optimal Initial Cost2Go Convergence "
-            r"& Shortest/Longest Path \\"
+            r"& \makecell{Discover goal \\ time \\ (mean $\pm$ std)} "
+            r"& \makecell{Discover goal \\ \#actions \\ (mean $\pm$ std) }"
+            r"& \makecell{Optimal Initial \\ Cost2Go Time \\ (mean $\pm$ std)} "
+            r"& \makecell{Optimal Initial \\ Cost2Go \#actions \\ (mean $\pm$ std)}"
+            r"& \makecell{Optimal Initial \\ Cost2Go \\ Convergence}"
+            r"& \makecell{Shortest/Longest \\ Path} \\"
         )
 
         latex_lines.append(r"\hline")

@@ -372,7 +372,7 @@ def q_learning_path(graph, init, goal_region,
         valit_path(graph, init, goal_region, gamma, values_out=optimal_values_out)
         optimal_values = optimal_values_out["values"]
         convergence_check_time += time.time() - optimal_values_time
-    episode_trajectories = None
+    episode_trajectories = []
 
     # Iteratively update Q-table values
     for episode in range(episodes):
