@@ -332,7 +332,7 @@ def q_learning_dc_path(graph, init, goal_region, episodes=15000, max_steps=5000,
 def q_learning_path(graph, init, goal_region, 
                     episodes=1000, max_steps=500, alpha=0.999, gamma=0.999, initial_values=0, 
                     t_action = False, t_goal = True,
-                    exploration_policy = "epsilon-greedy", convergence = False, deterministic = False, epsilon = 0.1, god_eye_convergence = False):
+                    exploration_policy = "epsilon-greedy", convergence = False, deterministic = False, epsilon = 0.1, god_eye_convergence = False, eps_decay = False):
     # Add an edge from the goal state to itself with 0 weight (termination action)
     if t_action:
         for goal in goal_region:
@@ -373,6 +373,9 @@ def q_learning_path(graph, init, goal_region,
         optimal_values = optimal_values_out["values"]
         convergence_check_time += time.time() - optimal_values_time
     episode_trajectories = []
+
+    epsilon_min = 0.1
+    epsilon_delta = (epsilon - epsilon_min) / episodes
 
     # Iteratively update Q-table values
     for episode in range(episodes):
@@ -448,6 +451,9 @@ def q_learning_path(graph, init, goal_region,
             # input("Press nter")
             if t_goal and state in goal_region:
                 break
+
+        if eps_decay:
+            epsilon = max(epsilon_min, epsilon - epsilon_delta)
         
         if god_eye_convergence and converged_action != 0:
             break
