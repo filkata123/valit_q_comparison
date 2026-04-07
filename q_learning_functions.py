@@ -375,7 +375,11 @@ def q_learning_path(graph, init, goal_region,
     episode_trajectories = []
 
     epsilon_min = 0.1
+    # With e.g. 3000 episodes, the epsilon is in the range [~0.87, 1]
+    # if we use a multiplier, so ... / episodes * omega, we get slower results and no convergence,
+    # so we keep the equation as such
     epsilon_delta = (epsilon - epsilon_min) / episodes
+
 
     # Iteratively update Q-table values
     for episode in range(episodes):
