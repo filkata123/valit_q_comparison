@@ -212,6 +212,9 @@ def run_simulations():
             (q_learning_path, (graph,p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random", False, True, 1, True),
              "Fully-random (deterministic with pi) exploration Q-learning (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1"),
 
+            (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "epsilon-greedy", False, False, 1, True, True),
+             "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = decaying"),
+
             # (q_learning_path, (graph, p1index, goal_indices, 1000, 3000, 1, 1, 0, True, True, "random", False, False, 1, True),
             #  "cost-based Q-learning true convergence (No discounting, no stochastic approximation) w/ term action & term goal, epsilon = 1, 500 -> 3000 steps"),
 
@@ -978,8 +981,8 @@ def run_stochastic_convergence_simulations():
     print("End: " + str(datetime.now()))
 
 def main():
-    #run_simulations()
-    run_stochastic_convergence_simulations()
+    run_simulations()
+    #run_stochastic_convergence_simulations()
     #run_learning_rate_x_prob_model_sim()
     #run_decaying_learning_rate_x_prob_model_sim()
 

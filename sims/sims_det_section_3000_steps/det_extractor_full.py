@@ -5,7 +5,8 @@ import re
 for ex_num in range(17):
     if ex_num == 6:
         continue
-    file = f"..\steve_sims_3000steps\deterministic\example_{ex_num}_results_100_samples.csv"
+    # file = f"..\steve_sims_3000steps\deterministic\example_{ex_num}_results_100_samples.csv"
+    file = f"examples_i5-12400F_16GBRam_RTX3060\example_{ex_num}_results_100_samples.csv"
     df = pd.read_csv(file)
 
     # ---------- Helper: shorten algorithm names ----------
@@ -20,16 +21,18 @@ for ex_num in range(17):
             return "Model-free Value Iteration"
 
         # Extract epsilon
-        eps_match = re.search(r"epsilon\s*=\s*([0-9.]+)", name_lower)
+        eps_match = re.search(r"epsilon\s*=\s*([0-9.]+|decaying)", name_lower)
         epsilon = eps_match.group(1) if eps_match else "?"
+
+        epsilon_display = r"\text{decaying}" if epsilon == "decaying" else epsilon
 
         # Deterministic with pi
         if "deterministic" in name_lower and "pi" in name_lower:
-            return rf"Q-learning\;($\pi$) ($\epsilon={epsilon})$"
+            return rf"Q-learning\;($\pi$) ($\epsilon={epsilon_display})$"
 
         # Q-learning variants
         if "q-learning" in name_lower:
-            return rf"Q-learning ($\epsilon={epsilon}$)"
+            return rf"Q-learning ($\epsilon={epsilon_display}$)"
 
         # Fallback
         return name
