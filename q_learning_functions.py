@@ -32,7 +32,7 @@ def god_eye_convergence_check(graph, Q, alpha, gamma, t_goal, goal_region):
     return newQ
 
 # Compute solution path from Q-table
-def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_steps=500, alpha=1, gamma=1, epsilon = 0.1, god_eye_convergence = False, prob_success = 0.9, decay_func = None, args = None, num_states = None):
+def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_steps=500, alpha=1, gamma=1, epsilon = 0.1, god_eye_convergence = False, prob_success = 0.9, decay_func = None, args = None, num_states = None, eps_decay = False):
     # Add an edge from the goal state to itself with 0 weight (termination action)
     for goal in goal_region:
         graph.add_edge(goal, goal, weight=0.0)
@@ -82,6 +82,12 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
         # }
         # avg_cost = sum(unique_weights) / len(unique_weights)
         # convergence_check_time += time.time() - edge_calc_cost_time
+
+    epsilon_min = 0.1
+    # With e.g. 3000 episodes, the epsilon is in the range [~0.87, 1]
+    # if we use a multiplier, so ... / episodes * omega, we get slower results and no convergence,
+    # so we keep the equation as such
+    epsilon_delta = (epsilon - epsilon_min) / episodes
 
     distance_list = []
     
@@ -188,6 +194,10 @@ def q_learning_stochastic_path(graph, init, goal_region, episodes=1000, max_step
                 goal_time_recorded = True
             if state in goal_region:
                 break
+
+        if eps_decay:
+            epsilon = max(epsilon_min, epsilon - epsilon_delta)
+
         if god_eye_convergence and converged_action != 0:
             break
         # If the values in the Q-table haven't changed by a lot, some sort of soft convergence has been reached
