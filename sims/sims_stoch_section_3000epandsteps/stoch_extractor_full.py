@@ -3,10 +3,10 @@ import re
 import string
 
 # Load CSV
-for ex_num in [0]: #range(17):
-    if ex_num in [1, 6, 10, 11]:
-        continue
-    file = f"examples_i5-12400F_16GBRam_RTX3060/example_{ex_num}_stochastic_results_10_samples.csv"
+for ex_num in [1, 10, 11]: #range(17):
+    # if ex_num in [1, 6, 10, 11]:
+    #     continue
+    file = f"examples_i5-12400F_16GBRam_RTX3060/low_prob_example_{ex_num}_stochastic_results_10_samples.csv"
     df = pd.read_csv(file)
 
     
@@ -20,7 +20,7 @@ for ex_num in [0]: #range(17):
 
     def extract_alpha_epsilon(name: str):
         alpha = re.search(r"alpha\s*=\s*([^,)\s]+)", name)
-        epsilon = re.search(r"epsilon\s*=\s*([0-9.]+)", name)
+        epsilon = re.search(r"epsilon\s*=\s*([^,)\s]+)", name)  # was: [0-9.]+
         return (
             alpha.group(1) if alpha else None,
             epsilon.group(1) if epsilon else None,
@@ -37,9 +37,11 @@ for ex_num in [0]: #range(17):
 
         if "q-learning" in name_lower:
             alpha, epsilon = extract_alpha_epsilon(name_lower)
-            # if alpha != "0.1":
-            #     alpha = "\\frac{1}{n(x,u)}^{(0.7)}"
-            return rf"Q-learning ($\rho={alpha}, \epsilon={epsilon}$)"
+            if epsilon == "decaying":
+                eps_str = r"$\epsilon$-decay"
+            else:
+                eps_str = rf"$\epsilon={epsilon}$"
+            return rf"Q-learning ($\rho={alpha}$, {eps_str})"
 
         return name
 
@@ -53,7 +55,7 @@ for ex_num in [0]: #range(17):
     for prob, subdf in df.groupby("SuccessProb"):
         latex_lines = []
         latex_lines.append(r"\begin{table}[!h]")
-        latex_lines.append(rf"\caption{{Comparing performance of \ql{{}} as we change the learning rate $\rho$ in stochastic problem with $\gamma = {prob}$ (Problem {ex_num}). Two versions of value iteration are also appended for contrast}}")
+        latex_lines.append(rf"\caption{{Performance of dynamic programming methods and \ql{{}} as we change the learning rate $\rho$ in stochastic problem with $\gamma = {prob}$ (Problem {ex_num}).}}")
         latex_lines.append(fr"\label{{tab:prob{ex_num}stoch{prob}}}")
         latex_lines.append(r"\resizebox{\textwidth}{!}{")
         latex_lines.append(r"\begin{tabular}{lccccccccc}")

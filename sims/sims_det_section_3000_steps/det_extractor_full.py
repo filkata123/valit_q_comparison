@@ -24,15 +24,15 @@ for ex_num in range(17):
         eps_match = re.search(r"epsilon\s*=\s*([0-9.]+|decaying)", name_lower)
         epsilon = eps_match.group(1) if eps_match else "?"
 
-        epsilon_display = r"\text{decaying}" if epsilon == "decaying" else epsilon
+        epsilon_display = r"\text{-decay}" if epsilon == "decaying" else f"={epsilon}"
 
         # Deterministic with pi
         if "deterministic" in name_lower and "pi" in name_lower:
-            return rf"Q-learning\;($\pi$) ($\epsilon={epsilon_display})$"
+            return rf"Q-learning\;($\pi$) ($\epsilon{epsilon_display})$"
 
         # Q-learning variants
         if "q-learning" in name_lower:
-            return rf"Q-learning ($\epsilon={epsilon_display}$)"
+            return rf"Q-learning ($\epsilon{epsilon_display}$)"
 
         # Fallback
         return name
